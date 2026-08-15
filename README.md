@@ -51,20 +51,32 @@ background. The top layer is a duplicate of the bottom layer, except for a
 series of hollow contours that let the fake entries show through.
 
 
-# Limited distribution support
+# Limitations
 
-EvoDevo assumes that the GRUB updating command on your system is `grub-mkconfig`
-(as on Arch and Debian, for example) and that your GRUB configuration file, `grub.cfg`,
-is located at `/boot/grub/`.
+## No support for Fedora
+
+EvoDevo has been tested successfully on Arch, elementary OS, Kubuntu, and
+Linux Mint.
+
+However, EvoDevo assumes that the GRUB updating command on your
+system is `grub-mkconfig` (as on Arch and Debian, for example) and that your GRUB
+configuration file, `grub.cfg`, is located at `/boot/grub/`.
 
 Thus, **Fedora**, or more generally, any distribution that relies on `grub2-mkconfig`
 instead of `grub-mkconfig`, **is not supported.**
 
-Please note that supporting Fedora is a non-goal. The brave souls who would like
-to adapt EvoDevo to Fedora are welcome to fork the project :-)
+## UKI Incompatibility
 
-EvoDevo has been tested successfully on Arch, elementary OS, and Kubuntu.
+If your booting process involves a
+[Unified Kernel Image](https://wiki.gentoo.org/wiki/Unified_kernel_image) (UKI),
+then EvoDevo's GRUB menu will look **partially or totally empty**.
 
+The reason: UKI menu entries are generated dynamically at boot time and kept in
+memory. They are never written in `grub.cfg`, so there is no way the EvoDevo
+install script could locate these entries and build the corresponding menu
+items. The menu will be fully functional, but empty-looking.
+
+TLDR: EvoDevo cannot be installed successfully on a system with UKI.
 
 # Dependencies
 
@@ -264,8 +276,8 @@ Emblems were simplified whenever needed to accommodate a reduced display size.
 
 # Thanks
 
-Thanks to Loric Brevet, Erik Koennecke, and David Niklas for their advice or
-help in testing the theme.
+Special thanks to Loric Brevet, Rubben Christiano, Erik Koennecke, Logansfury,
+and David Niklas for their advice or help in testing the theme.
 
 
 # License
