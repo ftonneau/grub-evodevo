@@ -251,17 +251,17 @@ The theme can be uninstalled at any time by running `sudo ./uninstall.sh`.
 
 # Troubleshooting / FAQ
 
-* **Q**: I am positive I have Inkscape installed, yet `./install.sh` aborts with
+**Q**: I am positive **Inkscape is installed**, yet `./install.sh` aborts with
 this error message: "`neither rsvg-convert nor Inkscape was detected.`"
 
-* **A**: Your software center may have installed Inkscape with Flatpak or Snap.
+**A**: Your software center may have installed Inkscape with Flatpak or Snap.
 Try to uninstall Inkscape, then reinstall it directly via your system package
 manager (e.g., `apt` or `pacman`).
 
-* **Q**: I am positive EvoDevo is installed. Yet, nothing shows up on
-reboot—only the GRUB console.
+**Q**: I am positive EvoDevo is installed. Yet, **nothing shows up on
+reboot**—only the GRUB console.
 
-* **A**: Some distributions hide the GRUB menu on boot by writing the following
+**A**: Some distributions like to hide the GRUB menu by writing the following
 in `/etc/default/grub`:
 
 ```
@@ -282,33 +282,33 @@ for the non-hidden menu to show up.)
 
 Then reinstall EvoDevo (`sudo ./install.sh`) before rebooting.
 
-* **Q**: I have installed EvoDevo with my custom wallpaper, but the theme does
-not load, and instead another background picture shows up!
+**Q**: I have installed EvoDevo with my custom wallpaper, but the theme does
+not load, and instead **another background picture shows up**.
 
-* **A**: This picture is probably a residue of another GRUB customization, left
+**A**: This picture is probably a residue of another GRUB customization, left
 under the `/boot/grub/` directory. Please have a look at what `/boot/grub/`
 contains. If some JPG or PNG file is listed under this directory, move the
 file out of the way, or it will interfere with theme installation.
 
-* **Q**: I have checked that my wallpaper is a valid 8-bit or 16-bit JPG or PNG
+**Q**: I have checked that **my wallpaper is a valid 8-bit or 16-bit JPG or PNG**
 picture, yet GRUB still complains about "png bits" or "png color range" errors.
 
-* **A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
+**A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
 is more likely to occur if your wallpaper has a restricted RGB profile with
 only a few colors in it. Try to increase the color range by adding smooth gradients
 to your picture. If everything fails, you may have no other choice than trying
 another wallpaper—preferably a photograph with a rich color profile.
 
-* **Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
-some faded text on the right of the screen.
+**Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
+**some faded text on the right of the screen**.
 
-* **A**: Your wallpaper is not 100% opaque. Open it in Gimp (or any other
+**A**: Your wallpaper is not 100% opaque. Open it in Gimp (or any other
 similar software) to remove the alpha channel (i.e., transparency).
 
-* **Q**: I have installed EvoDevo, but the menu looks empty!
+**Q**: I have installed EvoDevo, but the **menu looks empty**.
 
-* **A**: Your system may have completed an automatic update after you installed
-the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet anoter
+**A**: Your system may have completed an automatic update after you installed
+the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet another
 time. If the error persists, check whether your system uses UKI (Unified Kernel
 Image) for booting. If you do no use any UKI, please create an issue.
 
