@@ -40,7 +40,7 @@ from antialiased PNG files.
 
 For each entry in your `grub.cfg` file, the install script builds a corresponding
 SVG document with an entry emblem and the entry string. This SVG document is then
-converted to a **fake entry**--a PNG picture that GRUB will display as if it were
+converted to a **fake entry**—a PNG picture that GRUB will display as if it were
 an icon on the left side of each entry.
 
 GRUB still displays the text of actual entries alongside the fake ones, however,
@@ -56,16 +56,15 @@ series of hollow contours that let the fake entries show through.
 ## No support for Fedora
 
 EvoDevo has been tested successfully on Arch, elementary OS, Kubuntu, and
-Linux Mint.
+Linux Mint. However, EvoDevo assumes that the GRUB updating command on your
+system is `grub-mkconfig` and that your GRUB configuration file, `grub.cfg`,
+is located at `/boot/grub/`.
 
-However, EvoDevo assumes that the GRUB updating command on your
-system is `grub-mkconfig` (as on Arch and Debian, for example) and that your GRUB
-configuration file, `grub.cfg`, is located at `/boot/grub/`.
+Thus, **Fedora**, or more generally, any distribution that relies on
+`grub2-mkconfig` instead of `grub-mkconfig`, **is not supported.**
 
-Thus, **Fedora**, or more generally, any distribution that relies on `grub2-mkconfig`
-instead of `grub-mkconfig`, **is not supported.**
 
-## UKI Incompatibility
+## Incompatibility with UKI
 
 If your booting process involves a
 [Unified Kernel Image](https://wiki.gentoo.org/wiki/Unified_kernel_image) (UKI),
@@ -76,7 +75,7 @@ memory. They are never written in `grub.cfg`, so there is no way the EvoDevo
 install script could locate these entries and build the corresponding menu
 items. The menu will be fully functional, but empty-looking.
 
-TLDR: EvoDevo cannot be installed successfully on a system with UKI.
+TLDR: EvoDevo **should not be installed on a system with UKI**.
 
 # Dependencies
 
@@ -150,15 +149,13 @@ chmod u+x install.sh uninstall.sh
 # Wallpaper setting
 
 If you want to use your own wallpaper, add it to the `wallpapers/` subdirectory.
-Your wallpaper must be a valid JPG or PNG file. Its width and height should not
-necessarily equal those of the screen at boot time, as the install script will
-automatically resize your picture to the correct dimensions.
+Your wallpaper file must be a valid JPG or PNG picture, in 8-bit or 16-bit RGB
+color mode without interlacing.
 
-However, to avoid shape distortion, your wallpaper aspect ratio should preferably
-match that of the boot-time screen.
-
-**Important**: if you have some JPG or PNG wallpaper file present in `/boot/grub/`,
-move this file out of the way, or it may interfere with theme installation.
+The width and height of your wallpaper should not necessarily equal those of the
+screen at boot time, as the install script will automatically resize your picture
+to the correct dimensions. To avoid shape distortions, however, your wallpaper
+aspect ratio should preferably match that of the boot-time screen.
 
 
 # Configuration
@@ -218,15 +215,9 @@ the EvoDevo GRUB theme show up.
 
 ## Warnings
 
-Depending on your distribution, using ImageMagick as PNG processor may
+Depending on your distribution, using ImageMagick as image processor may
 lead to warning messages about a "deprecated convert command". These
 warning messages, however, do not impede theme installation.
-
-In some rare cases, GRUB may not decode a wallpaper picture correctly. GRUB will
-then refuse to load the theme, falling back instead on the default text-based menu.
-It may be worth opening your wallpaper file in Gimp and check for bit depth and/or
-for the presence of interlacing on export. If everything fails, you may have no
-other choice than trying another wallpaper.
 
 
 # Theme maintenance
@@ -256,6 +247,70 @@ Do check carefully, however, for the possibility of breaking changes in
 GRUB. Your distribution should keep you informed about these.
 
 The theme can be uninstalled at any time by running `sudo ./uninstall.sh`.
+
+
+# Troubleshooting / FAQ
+
+* **Q**: I am positive I have Inkscape installed, yet `./install.sh` aborts with
+this error message: "`neither rsvg-convert nor Inkscape was detected.`"
+
+* **A**: Your software center may have installed Inkscape with Flatpak or Snap.
+Try to uninstall Inkscape, then reinstall it directly via your system package
+manager (e.g., `apt` or `pacman`).
+
+* **Q**: I am positive EvoDevo is installed. Yet, nothing shows up on
+reboot—only the GRUB console.
+
+* **A**: Some distributions hide the GRUB menu on boot by writing the following
+in `/etc/default/grub`:
+
+```
+GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT=0
+```
+
+To be able to see the themed GRUB menu on reboot, you'll need to edit
+`/etc/default/grub` as root (e.g., with `sudo nano`) and change these lines to:
+
+```
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TIMEOUT=15
+```
+
+(The value of 15 seconds is just an example, the idea is to leave enough time
+for the non-hidden menu to show up.)
+
+Then reinstall EvoDevo (`sudo ./install.sh`) before rebooting.
+
+* **Q**: I have installed EvoDevo with my custom wallpaper, but the theme does
+not load, and instead another background picture shows up!
+
+* **A**: This picture is probably a residue of another GRUB customization, left
+under the `/boot/grub/` directory. Please have a look at what `/boot/grub/`
+contains. If some JPG or PNG file is listed under this directory, move the
+file out of the way, or it will interfere with theme installation.
+
+* **Q**: I have checked that my wallpaper is a valid 8-bit or 16-bit JPG or PNG
+picture, yet GRUB still complains about "png bits" or "png color range" errors.
+
+* **A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
+is more likely to occur if your wallpaper has a restricted RGB profile with
+only a few colors in it. Try to increase the color range by adding smooth gradients
+to your picture. If everything fails, you may have no other choice than trying
+another wallpaper—preferably a photograph with a rich color profile.
+
+* **Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
+some faded text on the right of the screen.
+
+* **A**: Your wallpaper is not 100% opaque. Open it in Gimp (or any other
+similar software) to remove the alpha channel (i.e., transparency).
+
+* **Q**: I have installed EvoDevo, but the menu looks empty!
+
+* **A**: Your system may have completed an automatic update after you installed
+the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet anoter
+time. If the error persists, check whether your system uses UKI (Unified Kernel
+Image) for booting. If you do no use any UKI, please create an issue.
 
 
 # Credits
