@@ -261,8 +261,8 @@ manager (e.g., `apt` or `pacman`).
 **Q**: I am positive EvoDevo is installed. Yet, **nothing shows up on
 reboot**—only the GRUB console.
 
-**A**: Some distributions like to hide the GRUB menu by writing the following
-in `/etc/default/grub`:
+**A**: Some distributions hide the GRUB menu by writing the following in
+`/etc/default/grub`:
 
 ```
 GRUB_TIMEOUT_STYLE=hidden
@@ -310,7 +310,7 @@ similar software) to remove the alpha channel (i.e., transparency).
 **A**: Your system may have completed an automatic update after you installed
 the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet another
 time. If the error persists, check whether your system uses UKI (Unified Kernel
-Image) for booting. If you do no use any UKI, please create an issue.
+Image) for booting. If you do no use any UKI, please create an issue on GitHub.
 
 
 # Credits
