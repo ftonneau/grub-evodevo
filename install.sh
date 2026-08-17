@@ -415,8 +415,6 @@ datum() {
         printf %s Mint
     elif contains "$query" '^(macos|osx)'; then
         printf %s Apple
-    elif contains "$query" '^mx'; then
-        printf %s Mxlinux
     elif contains "$query" '^pop'; then
         printf %s Pop
     elif contains "$query" '^sparky'; then
