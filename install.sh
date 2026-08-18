@@ -420,8 +420,11 @@ datum() {
     elif contains "$query" '^sparky'; then
         printf %s Sparky
     else
-        query=${query%OS}       # clean any OS-like suffix to facilitate search
-        match=$(ls -1 data/ | grep -E -is "^${query%% *}$") # => 1st word match
+        # Use first word as search key, after cleaning possible suffixes.
+        stem=${query%% *}
+        stem=${stem%,}
+        stem=${stem%OS}
+        match=$(ls -1 data/ | grep -E -is "^${stem}$")
         if [ "$match" ]; then
             printf %s "$match"
         else
