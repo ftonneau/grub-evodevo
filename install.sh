@@ -41,7 +41,7 @@ Wallpaper='default.jpg'
 # wallpapers/ subdirectory of the install folder, otherwise the file will
 # not be detected.*
 
-MenuStyle=narrow
+MenuStyle=wide
 # Possible values are 'narrow' and 'wide'. With MenuStyle=narrow, the menu has
 # rounded corners, the header can be colored differently, and entries extend all
 # the way to menu borders. With MenuStyle=wide, the menu has square corners and
@@ -158,61 +158,58 @@ mkdir -p "$icons_path"
 
 # DEFINITIONS
 
-MenuWidth=$((ScreenWidth * MenuPercent / 100))
-if [ "$MenuStyle" = narrow ]; then
-    LeftMargin=0
-    RightMargin=0
-else
-    LeftMargin=$((FontSize * 15/10))
-    RightMargin=$((FontSize * 15/10))
-fi
-PanelWidth=$((LeftMargin + MenuWidth + RightMargin))
-
-if [ "$MenuStyle" = narrow ]; then
-    TopMargin=$((FontSize * 35/10))
-    BottomMargin=$((FontSize * 32/10))
-else
-    TopMargin=$((FontSize * 60/10))
-    BottomMargin=$((FontSize * 50/10))
-fi
 ItemSquare=$((FontSize * 22/10))
 [ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1))
-ItemSpacing=2
+
+case $MenuStyle in
+narrow)
+    LeftMargin=0
+    RightMargin=0
+    TopMargin=$((FontSize * 35/10))
+    BottomMargin=$((FontSize * 32/10))
+    HeaderHeight=$((FontSize * 28/10))
+    TopGuide=$((FontSize * 15/10))
+    PanelRadius=$((ItemSquare / 2))
+    ItemRadius=0
+    ItemSpacing=2
+    ;;
+wide)
+    LeftMargin=$((FontSize * 15/10))
+    RightMargin=$((FontSize * 15/10))
+    TopMargin=$((FontSize * 60/10))
+    BottomMargin=$((FontSize * 50/10))
+    HeaderHeight=0
+    TopGuide=$((FontSize * 30/10))
+    PanelRadius=0
+    ItemRadius=$((ItemSquare / 2))
+    ItemSpacing=2
+    ;;
+esac
+
+MenuWidth=$((ScreenWidth * MenuPercent / 100))
+PanelWidth=$((LeftMargin + MenuWidth + RightMargin))
 ItemRoom=$((ItemSquare + ItemSpacing))
 MenuHeight=$((MenuCapacity * ItemRoom - ItemSpacing))
 PanelHeight=$((TopMargin + MenuHeight + BottomMargin))
 
-if [ "$MenuStyle" = narrow ]; then
-    TopLevel=$((FontSize * 15/10))
-    HeaderHeight=$((FontSize * 28/10))
-else
-    TopLevel=$((TopMargin / 2))
-    HeaderHeight=$TopMargin
-fi
-TopNavLevel=$((TopLevel - ItemSquare / 2))
-BottomLevel=$((PanelHeight - BottomMargin / 2))
-BottomNavLevel=$((BottomLevel - ItemSquare / 2))
+TopNavGuide=$((TopGuide - ItemSquare / 2))
+BottomGuide=$((PanelHeight - BottomMargin / 2))
+BottomNavGuide=$((BottomGuide - ItemSquare / 2))
 
 Tab=$((ItemSquare / 2))
 EntryTab=$((Tab + ItemSquare + Tab))
-
 NavTab=$((LeftMargin + Tab))
 TitleTab=$((LeftMargin + EntryTab))
-if [ "$MenuStyle" = narrow ]; then
+case $MenuStyle in
+narrow)
     LettersTab=$((PanelWidth - NavTab - ItemSquare / 2))
-else
+    ;;
+wide)
     LettersTab=$((PanelWidth - RightMargin - ItemSquare / 2))
-fi
+    ;;
+esac
 
 GlyphScale=$(awk "BEGIN { print $ItemSquare * 0.042 }")
-
-if [ "$MenuStyle" = narrow ]; then
-    PanelRadius=$((ItemSquare / 2))
-    ItemRadius=0
-else
-    PanelRadius=0
-    ItemRadius=$((ItemSquare / 2))
-fi
 
 BarTab=$((PanelWidth * 1/10))
 BarWidth=$((PanelWidth - BarTab * 2))
@@ -220,17 +217,14 @@ BarLevel=$((PanelHeight + FontSize * 2))
 BarHeight=$((FontSize / 5))
 BarLimit=50
 
-if [ "$XPercent" = center ]; then
-    PanelX=$(((ScreenWidth - PanelWidth) / 2))
-else
-    PanelX=$((ScreenWidth * $XPercent / 100))
-fi
-
-if [ "$YPercent" = center ]; then
-    PanelY=$(((ScreenHeight - PanelHeight) / 2))
-else
-    PanelY=$((ScreenHeight * $YPercent / 100))
-fi
+case $XPercent in
+    center) PanelX=$(((ScreenWidth - PanelWidth) / 2)) ;;
+    *) PanelX=$((ScreenWidth * $XPercent / 100)) ;;
+esac
+case $YPercent in
+    center) PanelY=$(((ScreenHeight - PanelHeight) / 2)) ;;
+    *) PanelY=$((ScreenHeight * $YPercent / 100)) ;;
+esac
 
 xpos() { printf %s $((PanelX + $1)); }
 
@@ -268,10 +262,6 @@ rgb() {
     '
 }
 
-if [ "$MenuStyle" = wide ]; then
-    HeaderBg=$MenuBg
-    HeaderOpacity=$MenuOpacity
-fi
 MenuBg=$(rgb "$MenuBg")
 HeaderBg=$(rgb "$HeaderBg")
 FocusBg=$(rgb "$FocusBg")
@@ -444,11 +434,11 @@ k=0; while [ $k -lt "$MenuCapacity" ]; do
 done
 add_str "</mask> </defs>"
 add_image panel-back.png
-add_text $TitleTab $TopLevel "$Title"
-add_glyph top $NavTab $TopNavLevel $TextFg
-add_text $LettersTab $TopLevel "$CommandMsg" end
-add_glyph bottom $NavTab $BottomNavLevel $TextFg
-add_text $LettersTab $BottomLevel "$EnterMsg" end
+add_text $TitleTab $TopGuide "$Title"
+add_glyph top $NavTab $TopNavGuide $TextFg
+add_text $LettersTab $TopGuide "$CommandMsg" end
+add_glyph bottom $NavTab $BottomNavGuide $TextFg
+add_text $LettersTab $BottomGuide "$EnterMsg" end
 convert_svg panel-front.png
 
 mv panel-back.png panel-front.png "$theme_path"
