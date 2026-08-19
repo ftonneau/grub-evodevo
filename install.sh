@@ -41,12 +41,13 @@ Wallpaper='default.jpg'
 # wallpapers/ subdirectory of the install folder, otherwise the file will
 # not be detected.*
 
-MenuStyle=wide
-# Possible values are 'narrow' and 'wide'. With MenuStyle=narrow, the menu has
-# rounded corners, the header can be colored differently, and entries extend all
-# the way to menu borders. With MenuStyle=wide, the menu has square corners and
-# the header cannot be colored differently; menu entries are rounded and have
-# wider margins.
+MenuStyle=maximal
+# Possible values are 'narrow', 'wide', and 'maximal'. With MenuStyle=narrow,
+# the menu has rounded corners, the header can be colored differently, and
+# entries extend all the way to menu borders. With MenuStyle=wide, the menu
+# has square corners and the header cannot be colored differently; menu entries
+# are rounded and have wider margins. With MenuStyle=maximal, the menu background
+# is fully transparent, title font is larger, and each entry has a border.
 
 XPercent=center
 YPercent=center
@@ -160,6 +161,8 @@ mkdir -p "$icons_path"
 
 ItemSquare=$((FontSize * 22/10))
 [ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1))
+LargerFontSize=$((FontSize * 15/10))
+PenWidth=2
 
 case $MenuStyle in
 narrow)
@@ -184,29 +187,38 @@ wide)
     ItemRadius=$((ItemSquare / 2))
     ItemSpacing=2
     ;;
+*)
+    LeftMargin=$((FontSize * 15/10))
+    RightMargin=$((FontSize * 15/10))
+    TopMargin=$((FontSize * 115/10))
+    BottomMargin=$((FontSize * 50/10))
+    HeaderHeight=0
+    TopGuide=$((FontSize * 85/10))
+    SpecialGuide=$((FontSize * 18/10))
+    LineGuide=$((FontSize * 54/10))
+    PanelRadius=0
+    ItemRadius=$((ItemSquare / 2))
+    ItemSpacing=$FontSize
+    ;;
 esac
 
-MenuWidth=$((ScreenWidth * MenuPercent / 100))
-PanelWidth=$((LeftMargin + MenuWidth + RightMargin))
 ItemRoom=$((ItemSquare + ItemSpacing))
 MenuHeight=$((MenuCapacity * ItemRoom - ItemSpacing))
 PanelHeight=$((TopMargin + MenuHeight + BottomMargin))
-
 TopNavGuide=$((TopGuide - ItemSquare / 2))
 BottomGuide=$((PanelHeight - BottomMargin / 2))
 BottomNavGuide=$((BottomGuide - ItemSquare / 2))
+
+MenuWidth=$((ScreenWidth * MenuPercent / 100))
+PanelWidth=$((LeftMargin + MenuWidth + RightMargin))
 
 Tab=$((ItemSquare / 2))
 EntryTab=$((Tab + ItemSquare + Tab))
 NavTab=$((LeftMargin + Tab))
 TitleTab=$((LeftMargin + EntryTab))
 case $MenuStyle in
-narrow)
-    LettersTab=$((PanelWidth - NavTab - ItemSquare / 2))
-    ;;
-wide)
-    LettersTab=$((PanelWidth - RightMargin - ItemSquare / 2))
-    ;;
+    narrow) LettersTab=$((PanelWidth - NavTab - ItemSquare / 2)) ;;
+    *) LettersTab=$((PanelWidth - RightMargin - ItemSquare / 2)) ;;
 esac
 
 GlyphScale=$(awk "BEGIN { print $ItemSquare * 0.042 }")
@@ -269,6 +281,12 @@ TextFg=$(rgb "$TextFg")
 IconFg=$(rgb "$IconFg")
 BarBg=$(rgb "$BarBg")
 BarFg=$(rgb "$BarFg")
+
+if [ "$MenuStyle" = maximal ]; then
+    MenuOpacity=0
+    FocusOpacity=1
+    Sigma=0
+fi
 
 # BACKGROUND PIXELS
 
@@ -368,9 +386,11 @@ convert_svg panel-back.png
 rm panel-base.png
 
 add_text() {
-    # $1: x; $2: y; $3: string; $4 (optional): alignment
-    add_str "<text x='$1' y='$(($2 + FontSize * 3/10))' text-anchor='${4:-start}'
-        font-family='$FontFamily' font-size='$FontSize' xml:space='preserve'
+    # $1: x; $2: y; $3: string; $4 (optional): anchoring; $5 (optional): size
+    anchor=${4:-start}
+    size=${5:-$FontSize}
+    add_str "<text x='$1' y='$(($2 + size * 3/10))' text-anchor='$anchor'
+        font-family='$FontFamily' font-size='$size' xml:space='preserve'
         fill='$TextFg' stroke-width='0'>$3</text>"
 }
 
@@ -434,7 +454,18 @@ k=0; while [ $k -lt "$MenuCapacity" ]; do
 done
 add_str "</mask> </defs>"
 add_image panel-back.png
-add_text $TitleTab $TopGuide "$Title"
+case $MenuStyle in
+narrow|wide)
+    add_text $TitleTab $TopGuide "$Title"
+    ;;
+*)
+    add_text $NavTab $SpecialGuide "$Title" start $LargerFontSize
+    add_str "<path
+        stroke='$FocusBg' stroke-width='$PenWidth'
+        d='M $((LeftMargin + Tab)) $LineGuide h $((MenuWidth - Tab * 2))'
+    />"
+    ;;
+esac
 add_glyph top $NavTab $TopNavGuide $TextFg
 add_text $LettersTab $TopGuide "$CommandMsg" end
 add_glyph bottom $NavTab $BottomNavGuide $TextFg
@@ -577,11 +608,10 @@ mv custom.cfg "$grub_config_file" || stop "cannot update $grub_config_file"
 install_item() {
     # $1: index; $2: category; $3: caption
     open_svg $MenuWidth $ItemSquare
-    if [ "$2" = SUBMENU ]; then
-        add_glyph more $Tab 0 $IconFg
-    else
-        add_glyph $(datum "$3") $Tab 0 $IconFg
-    fi
+    case $2 in
+        ENTRY) add_glyph $(datum "$3") $Tab 0 $IconFg ;;
+        SUBMENU) add_glyph more $Tab 0 $IconFg ;;
+    esac
     add_text $EntryTab $((ItemSquare / 2)) "$3"
     convert_svg "$icons_path/menuitem${1}.png"
 }
