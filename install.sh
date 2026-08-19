@@ -44,10 +44,10 @@ Wallpaper='default.jpg'
 MenuStyle=maximal
 # Possible values are 'narrow', 'wide', and 'maximal'. With MenuStyle=narrow,
 # the menu has rounded corners, the header can be colored differently, and
-# entries extend all the way to menu borders. With MenuStyle=wide, the menu
-# has square corners and the header cannot be colored differently; menu entries
-# are rounded and have wider margins. With MenuStyle=maximal, the menu background
-# is fully transparent, title font is larger, and each entry has a border.
+# entries extend to menu borders. With MenuStyle=wide, the menu has square
+# corners and the header cannot be colored differently; menu entries are
+# rounded and do not extend to menu borders. With MenuStyle=maximal, menu
+# background is fully transparent and title font is larger.
 
 XPercent=center
 YPercent=center
@@ -161,65 +161,69 @@ mkdir -p "$icons_path"
 
 ItemSquare=$((FontSize * 22/10))
 [ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1))
-LargerFontSize=$((FontSize * 15/10))
-PenWidth=2
+LargerSize=$((FontSize * 15/10))
+Tiny=2
 
 case $MenuStyle in
 narrow)
-    LeftMargin=0
-    RightMargin=0
-    TopMargin=$((FontSize * 35/10))
-    BottomMargin=$((FontSize * 32/10))
+    SideMargin=0
     HeaderHeight=$((FontSize * 28/10))
-    TopGuide=$((FontSize * 15/10))
+    BottomMargin=$((FontSize * 32/10))
     PanelRadius=$((ItemSquare / 2))
     ItemRadius=0
-    ItemSpacing=2
-    ;;
-wide)
-    LeftMargin=$((FontSize * 15/10))
-    RightMargin=$((FontSize * 15/10))
-    TopMargin=$((FontSize * 60/10))
-    BottomMargin=$((FontSize * 50/10))
-    HeaderHeight=0
-    TopGuide=$((FontSize * 30/10))
-    PanelRadius=0
-    ItemRadius=$((ItemSquare / 2))
-    ItemSpacing=2
     ;;
 *)
-    LeftMargin=$((FontSize * 15/10))
-    RightMargin=$((FontSize * 15/10))
-    TopMargin=$((FontSize * 115/10))
-    BottomMargin=$((FontSize * 50/10))
+    SideMargin=$((FontSize * 15/10))
     HeaderHeight=0
-    TopGuide=$((FontSize * 85/10))
-    SpecialGuide=$((FontSize * 18/10))
-    LineGuide=$((FontSize * 54/10))
+    BottomMargin=$((FontSize * 50/10))
     PanelRadius=0
     ItemRadius=$((ItemSquare / 2))
+    ;;
+esac
+case $MenuStyle in
+narrow)
+    TopMargin=$((FontSize * 35/10))
+    TopGuide=$((FontSize * 15/10))
+    ItemSpacing=Tiny
+    ;;
+wide)
+    TopMargin=$((FontSize * 60/10))
+    TopGuide=$((FontSize * 30/10))
+    ItemSpacing=Tiny
+    ;;
+*)
+    TopMargin=$((FontSize * 115/10))
+    LineGuide=$((FontSize * 53/10))
+    TopGuide=$((FontSize * 85/10))
     ItemSpacing=$FontSize
     ;;
 esac
 
-ItemRoom=$((ItemSquare + ItemSpacing))
-MenuHeight=$((MenuCapacity * ItemRoom - ItemSpacing))
+ItemShare=$((ItemSquare + ItemSpacing))
+MenuHeight=$((MenuCapacity * ItemShare - ItemSpacing))
 PanelHeight=$((TopMargin + MenuHeight + BottomMargin))
 TopNavGuide=$((TopGuide - ItemSquare / 2))
 BottomGuide=$((PanelHeight - BottomMargin / 2))
 BottomNavGuide=$((BottomGuide - ItemSquare / 2))
 
 MenuWidth=$((ScreenWidth * MenuPercent / 100))
-PanelWidth=$((LeftMargin + MenuWidth + RightMargin))
+PanelWidth=$((SideMargin + MenuWidth + SideMargin))
 
 Tab=$((ItemSquare / 2))
-EntryTab=$((Tab + ItemSquare + Tab))
-NavTab=$((LeftMargin + Tab))
-TitleTab=$((LeftMargin + EntryTab))
+SideTab=$((SideMargin + Tab))
 case $MenuStyle in
-    narrow) LettersTab=$((PanelWidth - NavTab - ItemSquare / 2)) ;;
-    *) LettersTab=$((PanelWidth - RightMargin - ItemSquare / 2)) ;;
+narrow|wide)
+    TitleGuide=$TopGuide
+    TitleTab=$((SideTab + ItemSquare + Tab))
+    TitleSize=$FontSize
+    ;;
+*)
+    TitleGuide=$((FontSize * 18/10))
+    TitleTab=$SideTab
+    TitleSize=$LargerSize
+    ;;
 esac
+MsgStop=$((PanelWidth - SideTab - PanelRadius))
 
 GlyphScale=$(awk "BEGIN { print $ItemSquare * 0.042 }")
 
@@ -448,28 +452,22 @@ add_str "<defs> <mask id='cut'>"
 add_box 0 0 100% 100% white
 k=0; while [ $k -lt "$MenuCapacity" ]; do
     add_box \
-        $LeftMargin $((TopMargin + k * ItemRoom)) $MenuWidth $ItemSquare \
+        $SideMargin $((TopMargin + k * ItemShare)) $MenuWidth $ItemSquare \
         black 1 $ItemRadius
     k=$((k + 1))
 done
 add_str "</mask> </defs>"
 add_image panel-back.png
-case $MenuStyle in
-narrow|wide)
-    add_text $TitleTab $TopGuide "$Title"
-    ;;
-*)
-    add_text $NavTab $SpecialGuide "$Title" start $LargerFontSize
-    add_str "<path
-        stroke='$FocusBg' stroke-width='$PenWidth'
-        d='M $((LeftMargin + Tab)) $LineGuide h $((MenuWidth - Tab * 2))'
+add_text $TitleTab $TitleGuide "$Title" start $TitleSize
+if [ "$MenuStyle" = maximal ]; then
+    add_str "<line stroke='$FocusBg' stroke-width='$Tiny'
+        x1='$SideTab' y1='$LineGuide' x2='$MsgStop' y2='$LineGuide'
     />"
-    ;;
-esac
-add_glyph top $NavTab $TopNavGuide $TextFg
-add_text $LettersTab $TopGuide "$CommandMsg" end
-add_glyph bottom $NavTab $BottomNavGuide $TextFg
-add_text $LettersTab $BottomGuide "$EnterMsg" end
+fi
+add_glyph top $SideTab $TopNavGuide $TextFg
+add_text $MsgStop $TopGuide "$CommandMsg" end
+add_glyph bottom $SideTab $BottomNavGuide $TextFg
+add_text $MsgStop $BottomGuide "$EnterMsg" end
 convert_svg panel-front.png
 
 mv panel-back.png panel-front.png "$theme_path"
@@ -514,7 +512,7 @@ terminal-height: "80%"
 }
 
 + boot_menu {
-    left = $(xpos $LeftMargin)
+    left = $(xpos $SideMargin)
     top = $(ypos $TopMargin)
     width = $MenuWidth
     height = $MenuHeight
@@ -612,7 +610,7 @@ install_item() {
         ENTRY) add_glyph $(datum "$3") $Tab 0 $IconFg ;;
         SUBMENU) add_glyph more $Tab 0 $IconFg ;;
     esac
-    add_text $EntryTab $((ItemSquare / 2)) "$3"
+    add_text $((Tab + ItemSquare + Tab)) $((ItemSquare / 2)) "$3"
     convert_svg "$icons_path/menuitem${1}.png"
 }
 
