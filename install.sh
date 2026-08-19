@@ -41,7 +41,7 @@ Wallpaper='default.jpg'
 # wallpapers/ subdirectory of the install folder, otherwise the file will
 # not be detected.*
 
-MenuStyle=maximal
+MenuStyle=narrow
 # Possible values are 'narrow', 'wide', and 'maximal'. With MenuStyle=narrow,
 # the menu has rounded corners, the header can be colored differently, and
 # entries extend to menu borders. With MenuStyle=wide, the menu has square
