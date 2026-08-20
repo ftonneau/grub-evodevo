@@ -184,12 +184,12 @@ case $MenuStyle in
 narrow)
     TopMargin=$((FontSize * 35/10))
     TopGuide=$((FontSize * 15/10))
-    ItemSpacing=Tiny
+    ItemSpacing=$Tiny
     ;;
 wide)
     TopMargin=$((FontSize * 60/10))
     TopGuide=$((FontSize * 30/10))
-    ItemSpacing=Tiny
+    ItemSpacing=$Tiny
     ;;
 *)
     TopMargin=$((FontSize * 115/10))
