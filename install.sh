@@ -230,7 +230,7 @@ GlyphScale=$(awk "BEGIN { print $ItemSquare * 0.042 }")
 BarTab=$((PanelWidth * 1/10))
 BarWidth=$((PanelWidth - BarTab * 2))
 BarLevel=$((PanelHeight + FontSize * 2))
-BarHeight=$((FontSize / 5))
+BarHeight=$((FontSize / 8))
 BarLimit=50
 
 case $XPercent in
