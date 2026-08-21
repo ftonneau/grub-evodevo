@@ -195,7 +195,7 @@ wide)
     TopMargin=$((FontSize * 115/10))
     LineGuide=$((FontSize * 53/10))
     TopGuide=$((FontSize * 85/10))
-    ItemSpacing=$FontSize
+    ItemSpacing=$((FontSize / 2))
     ;;
 esac
 
