@@ -288,7 +288,6 @@ BarFg=$(rgb "$BarFg")
 
 if [ "$MenuStyle" = maximal ]; then
     MenuOpacity=0
-    FocusOpacity=1
     Sigma=0
 fi
 
