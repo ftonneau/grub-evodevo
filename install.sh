@@ -47,7 +47,8 @@ MenuStyle=narrow
 # entries extend to menu borders. With MenuStyle=wide, the menu has square
 # corners and the header cannot be colored differently; menu entries are
 # rounded and do not extend to menu borders. With MenuStyle=maximal, menu
-# background is fully transparent and title font is larger.
+# background is fully transparent; menu title is larger and followed by a
+# horizontal separator.
 
 XPercent=center
 YPercent=center
