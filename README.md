@@ -4,10 +4,12 @@ Grub EvoDevo is a configurable GRUB theme with scalable graphics, background blu
 and antialiased true-type fonts. Any wallpaper (e.g., your desktop wallpaper) can be
 used as theme background.
 
-The style of the EvoDevo menu can be narrow or wide. A narrow-style menu has
-rounded corners, a header that can be colored independently, and rectangular
-entries without margins. A wide-style menu has square corners, no separate
-header, and rounded entries with left and right margins.
+The style of the EvoDevo menu can be narrow, wide, or maximal. A narrow-style menu
+has rounded corners, a header that can be colored independently, and rectangular
+entries without margins. A wide-style menu has square corners; the header cannot be
+colored differently; the entries are rounded and do not extend to menu borders. A
+maximal-style menu is fully transparent; the menu title is larger and followed
+by a horizontal separator.
 
 EvoDevo is configured by changing the value of variables in the installation
 script. The most important variables are screen width, screen height, and font
@@ -15,17 +17,20 @@ size. All graphics are scaled as a function of font size, so the theme can be
 made to look good at any screen resolution. Menu colors, amount of blurring,
 dimensions, position, font family, and menu messages can also be configured.
 
-These two screenshots show examples of narrow-style and wide-style menus.
+The following screenshots show examples of narrow-style, wide-style, and
+maximal-style menus.
 
-![example-narrow](example-narrow.png)
+![example-narrow](example-narrow.jpg)
 
-![example-wide](example-wide.png)
+![example-wide](example-wide.jpg)
+
+![example-maximal](example-maximal.jpg)
 
 The last screenshot shows what EvoDevo looks like with the provided default
 wallpaper and without any custom configuration except for screen width, screen
 height, and font size.
 
-![example-default](example-default.png)
+![example-default](example-default.jpg)
 
 In all cases, the install script detects your GRUB menu entries and assigns
 emblems/icons to them automatically. If an entry distro is not recognized,
