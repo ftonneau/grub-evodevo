@@ -555,9 +555,15 @@ DOC
 
 # CONFIGURATION GENERATION
 
-sed -i '/GRUB_BACKGROUND/s,^.*$,#GRUB_BACKGROUND="wallpaper",' "$grub_control"
+posix_sed() {
+    # $1: sed expression, $2: target file
+    sed "$1" "$2" > tmp.txt && mv tmp.txt "$2"
+    [ "$?" -eq 0 ] || stop 'could not perform replacement.'
+}
+
+posix_sed '/GRUB_BACKGROUND/s,^.*$,#GRUB_BACKGROUND="wallpaper",' "$grub_control"
 if grep -q 'GRUB_THEME' "$grub_control"; then
-    sed -i "/GRUB_THEME/s,^.*$,GRUB_THEME=$theme_file," "$grub_control"
+    posix_sed "/GRUB_THEME/s,^.*$,GRUB_THEME=$theme_file," "$grub_control"
 else
     printf %s\\n "GRUB_THEME=$theme_file" >> "$grub_control"
 fi

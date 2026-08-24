@@ -18,7 +18,13 @@ grub_config_file=/boot/grub/grub.cfg
 [ -r "$grub_control" ] || stop "cannot read $grub_control"
 [ -r "$grub_config_file" ] || stop "cannot read $grub_config_file"
 
-sed -i '/GRUB_THEME/s,^.*$,#GRUB_THEME="mytheme",' "$grub_control" 2>/dev/null
+posix_sed() {
+    # $1: sed expression, $2: target file
+    sed "$1" "$2" > tmp.txt && mv tmp.txt "$2"
+    [ "$?" -eq 0 ] || stop 'could not perform replacement.'
+}
+
+posix_sed '/GRUB_THEME/s,^.*$,#GRUB_THEME="mytheme",' "$grub_control" 2>/dev/null
 rm -r "/usr/share/grub/themes/evodevo" 2>/dev/null
 
 grub-mkconfig -o "$grub_config_file" || stop 'could not reconfigure GRUB.'
