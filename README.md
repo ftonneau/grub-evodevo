@@ -317,6 +317,28 @@ the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet anoth
 time. If the error persists, check whether your system uses UKI (Unified Kernel
 Image) for booting. If you do no use any UKI, please create an issue on GitHub.
 
+**Q**: The themed menu looks fine, but everywhere my distro should appear,
+**another distro** appears instead!
+
+**A**: Some distros (e.g., Linux Mint) may have their name replaced by the name
+of a parent distro (e.g., Ubuntu) in the GRUB config file. To fix the problem,
+look for a line that says:
+
+```
+Replacement=
+```
+
+in the EvoDevo install script. As explained in the comments below this line,
+assigning a value to `Replacement` allows you to get rid of the parent name
+and restore your distro name in its correct form. In the case of Linux Mint
+showing up as "Ubuntu", for example, writing:
+
+```
+Replacement='Ubuntu/Linux Mint'
+```
+
+in `install.sh` will do what you want.
+
 
 # Credits
 
@@ -334,9 +356,14 @@ All of the other emblems were downloaded from Wikimedia Commons or custom made.
 
 Emblems were simplified whenever needed to accommodate a reduced display size.
 
+
 # Thanks
 
-Special thanks to Loric Brevet, Rubben Christiano, Erik Koennecke, Logansfury,
+Special thanks to [Loric Brevet](https://github.com/lobre),
+[Rubben Christiano](https://github.com/BakaBen),
+Erik Koennecke,
+Logansfury,
+[Matt Marcuzzo](https://github.com/MattM123),
 and David Niklas for their advice or help in testing the theme.
 
 
