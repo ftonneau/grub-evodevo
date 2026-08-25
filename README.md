@@ -318,6 +318,12 @@ Image) for booting. If you do no use any UKI, please open an
 [issue](https://github.com/ftonneau/grub-evodevo/issues).
 
 
+# Link
+
+Further examples of Grub EvoDevo customization can be found on
+[OpenDesktop](https://www.gnome-look.org/p/2366327).
+
+
 # Credits
 
 The default wallpaper is a picture by Magda Ehlers, downloaded from
@@ -333,12 +339,6 @@ as well as the camera, cog, memory, and power emblems, were downloaded from
 All of the other emblems were downloaded from Wikimedia Commons or custom made.
 
 Emblems were simplified whenever needed to accommodate a reduced display size.
-
-
-# Link
-
-Further examples of Grub EvoDevo customization can be found on
-[OpenDesktop](https://www.gnome-look.org/p/2366327)
 
 
 # Thanks
