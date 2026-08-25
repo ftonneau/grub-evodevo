@@ -335,6 +335,12 @@ All of the other emblems were downloaded from Wikimedia Commons or custom made.
 Emblems were simplified whenever needed to accommodate a reduced display size.
 
 
+# Link
+
+Further examples of Grub EvoDevo customization can be found on
+[OpenDesktop](https://www.gnome-look.org/p/2366327)
+
+
 # Thanks
 
 Special thanks to [Loric Brevet](https://github.com/lobre),
