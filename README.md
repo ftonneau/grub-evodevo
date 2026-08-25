@@ -182,7 +182,7 @@ the EvoDevo GRUB theme show up**.
 
 # Advanced configuration
 
-There are 25 theme parameters besides `ScreenWidth`, `ScreenHeight`, `FontSize`,
+There are **25 theme parameters** besides `ScreenWidth`, `ScreenHeight`, `FontSize`,
 and `Wallpaper`. Their usage is explained in the comments after each assignment
 line.
 
@@ -309,9 +309,9 @@ Replacement='Ubuntu/Linux Mint'
 
 in `install.sh` will do what you want.
 
-**Q**: I have installed EvoDevo, but the **menu looks empty**.
+- **Q**: I have installed EvoDevo, but the **menu looks empty**.
 
-**A**: Your system may have completed an automatic update after you installed
+- **A**: Your system may have completed an automatic update after you installed
 the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet another
 time. If the error persists, check whether your system uses UKI (Unified Kernel
 Image) for booting. If you do no use any UKI, please open an
