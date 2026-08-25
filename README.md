@@ -106,20 +106,25 @@ Each assignment has a default value and is followed by comments (`# ...`)
 designed to help you during the configuration process.
 
 The first two assignments, to `ScreenWidth` and `ScreenHeight`, are the most
-important ones. Replace the default values by the values GRUB uses at boot
-time (and that you have just determined).
+important ones. **Replace the default values by the values GRUB uses at boot
+time** (and that you have just determined).
 
-The third assignment, about `FontSize` in pixels, is important too, as everything
-in the theme is scaled as function of font size. The default value, 20, will
-work well with a screen height of about 1000 pixels. With a larger screen
-height (e.g., 2000 pixels), try a larger font size (e.g., 40).
+The third assignment, about `FontSize` in pixels, is important too, as
+**everything in the theme is scaled as function of font size**. The default
+value, 20, will work well with a screen height of about 1000 pixels. With a
+larger screen height (e.g., 2000 pixels), try a larger font size (e.g., 40).
 
-The fourth assignment sets the background wallpaper. If you leave this line
-as is (`Wallpaper='default.jpg'`), EvoDevo will use the default wallpaper—a
-picture of the ocean by Magda Ehlers.
+The fourth assignment sets the **background wallpaper**. If you leave this
+line as is:
+
+```
+Wallpaper='default.jpg'
+```
+
+EvoDevo will use the default wallpaper—a picture of the ocean by Magda Ehlers.
 
 If you want to use a custom picture as wallpaper, however, you will need to
-add your picture file to the `wallpapers/` subdirectory of the install folder,
+**add your picture file** to the `wallpapers/` subdirectory of the install folder,
 and you will need to replace `default.jpg` in the install script by the actual
 name of your file. For example:
 
@@ -134,14 +139,14 @@ color mode without interlacing.
 
 The width and height of your wallpaper should not necessarily equal those of the
 screen at boot time, as the install script will automatically resize your picture
-to the correct dimensions. To avoid shape distortions, however, your wallpaper
+to the correct dimensions. To avoid possible distortions, however, your wallpaper
 aspect ratio should preferably match that of the boot-time screen.
 
 
 # First check
 
 Once done with the `ScreenWidth`, `ScreenHeight`, `FontSize`, and `Wallpaper`
-assignments, save the install script and run it as root:
+assignments, **save the install script and run it as root**:
 
 ```
 sudo ./install.sh
@@ -171,8 +176,8 @@ probably tell you what). A dependency may be missing, for example. The worst kin
 of error would be to forget to quote a `VALUE WITH BLANKS IN IT` or to forget a
 closing quote (as this would wreak havoc on the whole shell script).
 
-Once you are satisfied with your configuration, reboot your computer to have
-the EvoDevo GRUB theme show up.
+Once you are satisfied with your configuration, **reboot your computer to have
+the EvoDevo GRUB theme show up**.
 
 
 # Advanced configuration
@@ -222,23 +227,23 @@ The theme can be uninstalled at any time by running `sudo ./uninstall.sh`.
 
 # Troubleshooting / FAQ
 
-**Q**: I am positive **Inkscape is installed**, yet `./install.sh` aborts with
+- **Q**: I am positive **Inkscape is installed**, yet `./install.sh` aborts with
 this error message: "`neither rsvg-convert nor Inkscape was detected.`"
 
-**A**: Your software center may have installed Inkscape with Flatpak or Snap.
+- **A**: Your software center may have installed Inkscape with Flatpak or Snap.
 Try to uninstall Inkscape, then reinstall it directly via your system package
 manager (e.g., `apt` or `pacman`).
 
-**Q**: When running `install.sh`, I see some messages about a **"deprecated
+- **Q**: When running `install.sh`, I see some messages about a **"deprecated
 convert command"**.
 
-These messages are warnings from ImageMagick. They are not errors, however,
-and they do not impede installation.
+- **A**: These messages are warnings from ImageMagick. They are not errors,
+however, and they do not impede installation.
 
-**Q**: I am positive EvoDevo is installed. Yet, **nothing shows up on
+- **Q**: I am positive EvoDevo is installed. Yet, **nothing shows up on
 reboot**—only the GRUB console.
 
-**A**: Some distributions hide the GRUB menu by writing the following in
+- **A**: Some distributions hide the GRUB menu by writing the following in
 `/etc/default/grub`:
 
 ```
@@ -259,41 +264,33 @@ for the non-hidden menu to show up.)
 
 Then reinstall EvoDevo (`sudo ./install.sh`) before rebooting.
 
-**Q**: I have installed EvoDevo with my custom wallpaper, but the theme does
+- **Q**: I have installed EvoDevo with my custom wallpaper, but the theme does
 not load, and instead **another background picture shows up**.
 
-**A**: This picture is probably a residue of another GRUB customization, left
+- **A**: This picture is probably a residue of another GRUB customization, left
 under the `/boot/grub/` directory. Have a look at what `/boot/grub/` contains. If
 some JPG or PNG file is listed under this directory, move the file out of the way,
 or it will interfere with theme installation.
 
-**Q**: I have checked that **my wallpaper is a valid 8-bit or 16-bit JPG or PNG**
+- **Q**: I have checked that **my wallpaper is a valid 8-bit or 16-bit JPG or PNG**
 picture, yet GRUB still complains about "png bits" or "png color range" errors.
 
-**A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
+- **A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
 is more likely to occur if your wallpaper has a restricted RGB profile with
 only a few colors in it. Try to increase the color range by adding smooth gradients
 to your picture. If everything fails, you may have no other choice than trying
 another wallpaper—preferably a photograph with a rich variety of colors.
 
-**Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
+- **Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
 **some faded text on the right of the screen**.
 
-**A**: Your wallpaper is not 100% opaque. Open it in Gimp (or any other
+- **A**: Your wallpaper is not 100% opaque. Open it in Gimp (or any other
 similar software) to remove the alpha channel (i.e., transparency).
 
-**Q**: I have installed EvoDevo, but the **menu looks empty**.
-
-**A**: Your system may have completed an automatic update after you installed
-the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet another
-time. If the error persists, check whether your system uses UKI (Unified Kernel
-Image) for booting. If you do no use any UKI, please open an
-[issue](https://github.com/ftonneau/grub-evodevo/issues).
-
-**Q**: The themed menu looks fine, but everywhere my distro should appear,
+- **Q**: The themed menu looks fine, but everywhere my distro should appear,
 **another distro** appears instead!
 
-**A**: Some distros (e.g., Linux Mint) have their name replaced by the name
+- **A**: Some distros (e.g., Linux Mint) have their name replaced by the name
 of a parent distro (e.g., Ubuntu) in the GRUB config file. To fix the problem,
 look for a line that says:
 
@@ -311,6 +308,14 @@ Replacement='Ubuntu/Linux Mint'
 ```
 
 in `install.sh` will do what you want.
+
+**Q**: I have installed EvoDevo, but the **menu looks empty**.
+
+**A**: Your system may have completed an automatic update after you installed
+the theme, but before rebooting. Try to reinstall EvoDevo, then reboot yet another
+time. If the error persists, check whether your system uses UKI (Unified Kernel
+Image) for booting. If you do no use any UKI, please open an
+[issue](https://github.com/ftonneau/grub-evodevo/issues).
 
 
 # Credits
