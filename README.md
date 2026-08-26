@@ -304,7 +304,7 @@ and restore your distro name in its correct form. In the case of Linux Mint
 showing up as "Ubuntu," for example, writing:
 
 ```
-Replacement='Ubuntu/Linux Mint'
+Replacement='Ubuntu@Linux Mint'
 ```
 
 in `install.sh` will do what you want.
