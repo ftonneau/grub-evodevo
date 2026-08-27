@@ -346,7 +346,7 @@ Emblems were simplified whenever needed to accommodate a reduced display size.
 Special thanks to [Loric Brevet](https://github.com/lobre),
 [Rubben Christiano](https://github.com/BakaBen),
 Erik Koennecke,
-Logansfury,
+[Logansfury](https://github.com/Logansfury),
 [Matt Marcuzzo](https://github.com/MattM123),
 and David Niklas for their advice or help in testing the theme.
 
