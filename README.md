@@ -295,16 +295,16 @@ of a parent distro (e.g., Ubuntu) in the GRUB config file. To fix the problem,
 look for a line that says:
 
 ```
-Replacement=
+Repair=
 ```
 
 in the EvoDevo install script. As explained in the comments below this line,
-assigning a value to `Replacement` allows you to get rid of the parent name
-and restore your distro name in its correct form. In the case of Linux Mint
+assigning a value to `Repair` allows you to get rid of the parent name and
+restore your distro name in its correct form. In the case of Linux Mint
 showing up as "Ubuntu," for example, writing:
 
 ```
-Replacement='Ubuntu@Linux Mint'
+Repair='Ubuntu@Linux Mint'
 ```
 
 in `install.sh` will do what you want.

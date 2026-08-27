@@ -99,13 +99,13 @@ CommandMsg='[ e  Edit   |   c  Console ]'
 # such as quotes, <, and &. You can use successive blanks to increase spacing
 # betwen words.
 
-Replacement=
+Repair=
 # Some distros (e.g., Linux Mint) may have their name replaced by another one
 # e.g., Ubuntu) in the GRUB menu. You can restore the correct name by writing:
-# Replacement='Ubuntu@Linux Mint'
+# Repair='Ubuntu@Linux Mint'
 # for example. The left side of the @ symbol is the name to be replaced, the
 # right side of the @ symbol is the correct name. Names may comprise blanks,
-# but the value for Replacement must be quoted.
+# but the value for Repair must be quoted.
 
 MemoryRegex='memory|memtest'
 PowerRegex='halt|reboot|shutdown'
@@ -615,7 +615,7 @@ BEGIN {
 
 [ -f scan.txt ] || stop 'no captions generated.'
 
-[ -z "$Replacement" ] || posix_sed "s@${Replacement}@g" scan.txt
+[ -z "$Repair" ] || posix_sed "s@${Repair}@g" scan.txt
 
 mv custom.cfg "$grub_config_file" || stop "cannot update $grub_config_file"
 
