@@ -1,22 +1,21 @@
 # Grub EvoDevo
 
-Grub EvoDevo is a configurable GRUB theme with scalable graphics, background blurring,
-and antialiased true-type fonts. Any wallpaper can be used as theme background.
+Grub EvoDevo is a highly configurable GRUB theme with scalable graphics, background
+blurring, and antialiased true-type fonts. Any wallpaper can be used as theme
+background, and more than twenty graphical parameters (from menu size to colors,
+transparency, and amount of blurring) can be customized.
 
-The style of the EvoDevo menu can be _narrow_, _wide_, or _maximal_. As shown in the
-following screenshots, menu styles differ in terms of header colorization, margins,
-border types, and formatting of the menu title.
+EvoDevo also allows you to modify the **text of your menu entries**, and does it
+perfectly safely because only the visual display changes (the real entries stay
+unaffected). In all cases, the install script auto-detects your GRUB entries and
+decorates them with the corresponding emblem. If a distro is not recognized, it
+is assigned a hashbang (#) as emblem.
 
 ![example-narrow](example-narrow.jpg)
 
 ![example-wide](example-wide.jpg)
 
 ![example-maximal](example-maximal.jpg)
-
-In all cases, the install script detects your GRUB menu entries and assigns distro
-emblems/icons to them automatically. If a distro is not recognized, it is assigned
-a hashbang (#) as emblem.
-
 
 # Won't, don't
 
@@ -180,15 +179,42 @@ Once you are satisfied with your configuration, **reboot your computer to have
 the EvoDevo GRUB theme show up**.
 
 
-# Advanced configuration
+# Advanced graphic configuration
 
-There are **25 theme parameters** besides `ScreenWidth`, `ScreenHeight`, `FontSize`,
-and `Wallpaper`. Their usage is explained in the comments after each assignment
-line.
+The install script includes more than **15 graphical parameters** besides
+`ScreenWidth`, `ScreenHeight`, `FontSize`, and `Wallpaper`. Their usage is
+explained in the comments after each assignment line.
 
 These parameters are ordered in terms of decreasing importance, so change them
 starting from the top, and only if the need arises.
 
+# Advanced text configuration
+
+The **title**, as well as the **top and bottom messages**, of the GRUB menu can be
+configured. EvoDevo also allows you to modify the text of **up to ten menu entries**
+(or parts of menu entries) to your liking.
+
+To this end, the install script includes ten variables named:
+
+```
+Change_0=
+Change_1=
+Change_2=
+...
+Change_9=
+```
+
+Changing a menu entry (or portion of menu entry) is as simple as assigning
+a `TEXT@REPLACEMENT` value to any of these variables. If you want to change
+the "Kubuntu" string into "Kubuntu KDE/Wayland", for example, writing:
+
+```
+Change_0='Kubuntu@Kunbuntu KDE/Wayland'
+```
+
+will do the job. The left side of the @ symbol is the portion of text to be
+replaced, the right side of the @ symbol is the replacement string that you
+want.
 
 # Theme maintenance
 
