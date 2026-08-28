@@ -107,6 +107,19 @@ Repair=
 # right side of the @ symbol is the correct name. Names may comprise blanks,
 # but the value for Repair must be quoted.
 
+Change_1=
+Change_2=
+Change_3=
+Change_4=
+Change_5=
+Change_6=
+Change_7=
+Change_8=
+Change_9=
+# These assignments give you the opportunity to change the apperance of up to
+# nine distro names (or parts of entries) in the GRUB menu. The syntax is the
+# same as for Repair. For example: Change_1='Kubuntu@Kubuntu KDE'
+
 MemoryRegex='memory|memtest'
 PowerRegex='halt|reboot|shutdown'
 SnapshotRegex='snapshot'
@@ -616,6 +629,16 @@ BEGIN {
 [ -f scan.txt ] || stop 'no captions generated.'
 
 [ -z "$Repair" ] || posix_sed "s@${Repair}@g" scan.txt
+
+[ -z "$Change_1" ] || posix_sed "s@${Change_1}@g" scan.txt
+[ -z "$Change_2" ] || posix_sed "s@${Change_2}@g" scan.txt
+[ -z "$Change_3" ] || posix_sed "s@${Change_3}@g" scan.txt
+[ -z "$Change_4" ] || posix_sed "s@${Change_4}@g" scan.txt
+[ -z "$Change_5" ] || posix_sed "s@${Change_5}@g" scan.txt
+[ -z "$Change_6" ] || posix_sed "s@${Change_6}@g" scan.txt
+[ -z "$Change_7" ] || posix_sed "s@${Change_7}@g" scan.txt
+[ -z "$Change_8" ] || posix_sed "s@${Change_8}@g" scan.txt
+[ -z "$Change_9" ] || posix_sed "s@${Change_9}@g" scan.txt
 
 mv custom.cfg "$grub_config_file" || stop "cannot update $grub_config_file"
 
