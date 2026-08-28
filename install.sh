@@ -118,8 +118,8 @@ Change_7=
 Change_8=
 Change_9=
 # These assignments give you the opportunity to change the apperance of up to
-# nine distro names (or parts of entries) in the GRUB menu. The syntax is the
-# same as for Repair. For example: Change_0='Kubuntu@Kubuntu KDE'
+# ten distro names (or parts of entries) in the GRUB menu. The syntax is the
+# same as for Repair. For example: Change_0='Linux Mint@Mint Xfce'
 
 MemoryRegex='memory|memtest'
 PowerRegex='halt|reboot|shutdown'
