@@ -107,6 +107,7 @@ Repair=
 # right side of the @ symbol is the correct name. Names may comprise blanks,
 # but the value for Repair must be quoted.
 
+Change_0=
 Change_1=
 Change_2=
 Change_3=
@@ -118,7 +119,7 @@ Change_8=
 Change_9=
 # These assignments give you the opportunity to change the apperance of up to
 # nine distro names (or parts of entries) in the GRUB menu. The syntax is the
-# same as for Repair. For example: Change_1='Kubuntu@Kubuntu KDE'
+# same as for Repair. For example: Change_0='Kubuntu@Kubuntu KDE'
 
 MemoryRegex='memory|memtest'
 PowerRegex='halt|reboot|shutdown'
@@ -630,6 +631,7 @@ BEGIN {
 
 [ -z "$Repair" ] || posix_sed "s@${Repair}@g" scan.txt
 
+[ -z "$Change_0" ] || posix_sed "s@${Change_0}@g" scan.txt
 [ -z "$Change_1" ] || posix_sed "s@${Change_1}@g" scan.txt
 [ -z "$Change_2" ] || posix_sed "s@${Change_2}@g" scan.txt
 [ -z "$Change_3" ] || posix_sed "s@${Change_3}@g" scan.txt
