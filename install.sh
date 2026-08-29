@@ -37,11 +37,13 @@ FontSize=20
 # a larger font size (e.g., 40).
 
 Wallpaper='default.jpg'
-# Name of the JPG or PNG file to use as wallpaper. *Put this file in the
-# wallpapers/ subdirectory of the install folder, otherwise the file will
-# not be detected.*
+# The value assigned to Wallpaper should be either (a) the name of a JPG
+# or PNG file to use as wallpaper, or (b) a color name in the #rrggbb format
+# (e.g., '#ba84c2'). If you choose option (a), put your file in the wallpapers/
+# subdirectory of the install folder, otherwise the file will not be detected.
+# If you choose option (b), don't forget the quotes around the color name.
 
-MenuStyle=narrow
+MenuStyle=wide
 # Possible values are 'narrow', 'wide', and 'maximal'. With MenuStyle=narrow,
 # the menu has rounded corners, the header can be colored differently, and
 # entries extend to menu borders. With MenuStyle=wide, the menu has square
@@ -154,15 +156,23 @@ grub_config_file=/boot/grub/grub.cfg
 [ -r "$grub_control" ] || stop "cannot read $grub_control"
 [ -r "$grub_config_file" ] || stop "cannot read $grub_config_file"
 
-if command -v gm >/dev/null; then
-    change='gm convert'
-    smooth='gm mogrify -blur'
-elif command -v convert >/dev/null; then
-    change='convert'
-    smooth='mogrify -blur'
-else
-    stop 'neither GraphicsMagick nor ImageMagick was detected.'
-fi
+case $Wallpaper in
+'#'*)
+    using_wallpaper=
+    ;;
+*)
+    using_wallpaper=yes
+    if command -v gm >/dev/null; then
+        change='gm convert'
+        smooth='gm mogrify -blur'
+    elif command -v convert >/dev/null; then
+        change='convert'
+        smooth='mogrify -blur'
+    else
+        stop 'neither GraphicsMagick nor ImageMagick was detected.'
+    fi
+    ;;
+esac
 
 if command -v rsvg-convert >/dev/null; then
     png_make='rsvg-convert -o tmp.png'
@@ -344,27 +354,38 @@ convert_svg "$theme_path/item-selected-c.png"
 
 # SCREEN COVERING
 
-[ "$Wallpaper" ] || stop 'no wallpaper specified.'
-[ -f "wallpapers/$Wallpaper" ] || stop "cannot find $Wallpaper"
+[ "$Wallpaper" ] || stop 'no wallpaper or background specified.'
 
-echo 'Preparing wallpaper [may take a few seconds] ... '
-$change \
-"wallpapers/$Wallpaper" -geometry "${ScreenWidth}x${ScreenHeight}!" paper.png \
-|| stop "cannot resize $Wallpaper"
+if [ "$using_wallpaper" ]; then
+    [ -f "wallpapers/$Wallpaper" ] || stop "cannot find $Wallpaper"
+    echo 'Preparing wallpaper [may take a few seconds] ... '
+    $change \
+    "wallpapers/$Wallpaper" -geometry "${ScreenWidth}x${ScreenHeight}!" screen.png \
+    || stop "cannot resize $Wallpaper"
+fi
+
+# The full-size wallpaper picture, screen.png, must be split in two parts,
+# left.png and right.png. The right part will be be used to cover the text
+# side of the actual menu entries.
 
 crop() {
     # $1: input file, $2: width, $3: height, $4: x, $5: y, $6: destination
     $change "$1" -crop "$2x$3+$4+$5" "$6"
 }
 
-# The full-size wallpaper picture, paper.png, must be split in two parts,
-# left.png and right.png. The right part will be be used to cover the text
-# side of the actual menu entries.
-
 ScreenL=$(xpos $PanelWidth)
 ScreenR=$((ScreenWidth - ScreenL))
-crop paper.png "$ScreenL" "$ScreenHeight" 0 0 "$theme_path/left.png"
-crop paper.png "$ScreenR" "$ScreenHeight" "$ScreenL" 0 "$theme_path/right.png"
+if [ "$using_wallpaper" ]; then
+    # We split a real PNG image in left and right parts.
+    crop screen.png "$ScreenL" "$ScreenHeight" 0 0 "$theme_path/left.png"
+    crop screen.png "$ScreenR" "$ScreenHeight" "$ScreenL" 0 "$theme_path/right.png"
+else
+    # "$Wallpaper" is a single, extensible color.
+    open_svg 1 1 "$Wallpaper"
+    convert_svg "$theme_path/left.png"
+    open_svg 1 1 "$Wallpaper"
+    convert_svg "$theme_path/right.png"
+fi
 
 # PANEL HANDLING
 
@@ -390,10 +411,17 @@ add_image() {
         mask='url(#cut)'/>"
 }
 
-echo 'Preparing menu background [may take a few seconds] ... '
-[ "$Sigma" = 0 ] || $smooth "$((Sigma * 3))x${Sigma}" paper.png
-crop paper.png "$PanelWidth" "$PanelHeight" "$PanelX" "$PanelY" panel-base.png
-rm paper.png
+if [ "$using_wallpaper" ]; then
+    # We must cut a rectangle from the background screen.
+    echo 'Preparing menu background [may take a few seconds] ... '
+    [ "$Sigma" = 0 ] || $smooth "$((Sigma * 3))x${Sigma}" screen.png
+    crop screen.png "$PanelWidth" "$PanelHeight" "$PanelX" "$PanelY" panel-base.png
+    rm screen.png
+else
+    # We make a simple, wallpaper-colored rectangle.
+    open_svg "$PanelWidth" "$PanelHeight" "$Wallpaper"
+    convert_svg panel-base.png
+fi
 
 # Menu entries form a middle layer sandwiched between two layers of panel
 # rendering. The bottom layer, panel-back.png, is a cutout of the blurred
