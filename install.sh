@@ -37,7 +37,7 @@ FontSize=20
 # a larger font size (e.g., 40).
 
 Wallpaper='default.jpg'
-# The value assigned to Wallpaper should be either (a) the name of a JPG
+# The value assigned to Wallpaper should be either (a) the name of a JPEG
 # or PNG file to use as wallpaper, or (b) a color name in the #rrggbb format
 # (e.g., '#ba84c2'). If you choose option (a), put your file in the wallpapers/
 # subdirectory of the install folder, otherwise the file will not be detected.

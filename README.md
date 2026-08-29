@@ -133,7 +133,7 @@ Wallpaper='my picture.jpg'
 
 ## Note
 
-Your wallpaper file must be a valid JPG or PNG picture, in 8-bit or 16-bit RGB
+Your wallpaper file must be a valid JPEG or PNG picture, in 8-bit or 16-bit RGB
 color mode without interlacing.
 
 The width and height of your wallpaper should not necessarily equal those of the
@@ -295,10 +295,10 @@ not load, and instead **another background picture shows up**.
 
 - **A**: This picture is probably a residue of another GRUB customization, left
 under the `/boot/grub/` directory. Have a look at what `/boot/grub/` contains. If
-some JPG or PNG file is listed under this directory, move the file out of the way,
+some JPEG or PNG file is listed under this directory, move the file out of the way,
 or it will interfere with theme installation.
 
-- **Q**: I have checked that **my wallpaper is a valid 8-bit or 16-bit JPG or PNG**
+- **Q**: I have checked that **my wallpaper is a valid 8-bit or 16-bit JPEG or PNG**
 picture, yet GRUB still complains about "png bits" or "png color range" errors.
 
 - **A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
