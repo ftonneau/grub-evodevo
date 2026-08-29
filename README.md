@@ -34,14 +34,18 @@ TLDR: Do not install EvoDevo on a system with UKI.
 
 Aside from a functional POSIX system, EvoDevo requires:
 
-- **ImageMagick** or **GraphicsMagick** to resize, crop, and blur your chosen
-wallpaper.
-
 - **rsvg-convert** or **Inkscape** to convert SVG documents to PNG images.
 
 The rsvg-convert utility is less known, but more lightweight, than Inkscape. If
 you choose to install `rsvg-convert`, look for a package named along the lines
 of `librsvg` or `librsvg2`.
+
+- **ImageMagick** or **GraphicsMagick** to process your wallpaper picture,
+assuming you use one.
+
+If you prefer your screen background to be a single color (e.g., purple)
+instead of a wallpaper picture, then having ImageMagick or GraphicsMagick
+installed is not necessary.
 
 
 # Installation
@@ -131,10 +135,27 @@ name of your file. For example:
 Wallpaper='my picture.jpg'
 ```
 
+A last possibility is to assign to `Wallpaper` **a color name in the #rrggbb
+format**. For example, writing the following:
+
+```
+Wallpaper='#ba84c2'
+```
+
+will make the background of your screen look purple.
+
+Using a single color (instead of a wallpaper picture) as background has
+three advantages:
+
+- installation is faster
+- it does not require ImageMagick or GraphicsMagick
+- it comes in handy if the GRUB
+[dislikes your wallpapers](https://bbs.archlinux.org/viewtopic.php?id=279201)
+
 ## Note
 
-Your wallpaper file must be a valid JPEG or PNG picture, in 8-bit or 16-bit RGB
-color mode without interlacing.
+If you choose to use a wallpaper file, it must be a valid JPEG or PNG picture,
+in 8-bit or 16-bit RGB color mode without interlacing.
 
 The width and height of your wallpaper should not necessarily equal those of the
 screen at boot time, as the install script will automatically resize your picture
@@ -303,9 +324,10 @@ picture, yet GRUB still complains about "png bits" or "png color range" errors.
 
 - **A**: In a few cases, GRUB may not decode a wallpaper picture correctly. This
 is more likely to occur if your wallpaper has a restricted RGB profile with
-only a few colors in it. Try to increase the color range by adding smooth gradients
-to your picture. If everything fails, you may have no other choice than trying
-another wallpaper—preferably a photograph with a rich variety of colors.
+only a few colors in it. **Try to increase the color range** by adding smooth
+gradients to your picture. If everything fails, you may have no other choice
+than trying another wallpaper, or giving up on wallpapers entirely (and use
+instead a single color as background).
 
 - **Q**: I have installed EvoDevo, but the menu looks slightly ugly, and I see
 **some faded text on the right of the screen**.
