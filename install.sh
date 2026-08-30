@@ -37,20 +37,33 @@ FontSize=20
 # a larger font size (e.g., 40).
 
 Wallpaper='default.jpg'
-# The value assigned to Wallpaper should be either (a) the name of a JPEG
+# The value assigned to `Wallpaper` should be either (a) the name of a JPEG
 # or PNG file to use as wallpaper, or (b) a color name in the #rrggbb format
 # (e.g., '#ba84c2'). If you choose option (a), put your file in the wallpapers/
 # subdirectory of the install folder, otherwise the file will not be detected.
 # If you choose option (b), don't forget the quotes around the color name.
 
+Image=
+# This parameter can be used to add a custom image to the screen. Your image
+# must be a valid JPEG or PNG file. Put it in the wallpapers/ subdirectory of
+# the install folder, and assign the name of the file to `Image`. For example:
+# Image='my logo.png'
+# The image will be displayed at its original size (i.e., without rescaling).
+
+ImageLeft=
+ImageTop=
+# If you want to add a custom image (Image=...) to the screen, ImageLeft and
+# ImageTop allow you to specify the X, Y coordinates (in pixels) of the top
+# left corner of your image. For example:
+# ImageLeft=1000
+# ImageTop=250
+
 MenuStyle=wide
-# Possible values are 'narrow', 'wide', and 'maximal'. With MenuStyle=narrow,
-# the menu has rounded corners, the header can be colored differently, and
-# entries extend to menu borders. With MenuStyle=wide, the menu has square
-# corners and the header cannot be colored differently; menu entries are
-# rounded and do not extend to menu borders. With MenuStyle=maximal, menu
-# background is fully transparent; menu title is larger and followed by a
-# horizontal separator.
+# Possible values are 'narrow', 'wide', and 'maximal'. A narrow menu has rounded
+# corners, a header that can be colored differently, and entries without margins.
+# A wide menu has square corners, no separate header, and rounded entries with
+# left and right margins. A maximal menu is fully transparent and has a large
+# title followed by a horizontal separator.
 
 XPercent=center
 YPercent=center
@@ -183,8 +196,8 @@ else
 fi
 
 theme_path=/usr/share/grub/themes/evodevo
-theme_file="${theme_path}/theme.txt"
-icons_path="${theme_path}/icons"
+theme_file="$theme_path/theme.txt"
+icons_path="$theme_path/icons"
 
 rm -r "$theme_path" 2>/dev/null
 mkdir -p "$theme_path"
@@ -522,6 +535,18 @@ convert_svg panel-front.png
 
 mv panel-back.png panel-front.png "$theme_path"
 
+# CUSTOM IMAGE (OPTIONAL)
+
+if [ "$Image" ]; then
+    cp "wallpapers/$Image" "$theme_path" || stop "cannot find custom image"
+else
+    open_svg 1 1
+    convert_svg "$theme_path/transparent-dot.png"
+    Image=transparent-dot.png
+    ImageLeft=0
+    ImageTop=0
+fi
+
 # PROGRESS BAR
 
 make_bar() {
@@ -546,6 +571,12 @@ terminal-left: "10%"
 terminal-top: "10%"
 terminal-width: "80%"
 terminal-height: "80%"
+
++ image {
+    left = $ImageLeft
+    top = $ImageTop
+    file = "${Image}"
+}
 
 + image {
     left = $(xpos 0)
@@ -694,7 +725,6 @@ rm scan.txt
 rm tmp.svg
 
 cat << DOC
-
 
 -----------------------------
 Theme installed successfully!

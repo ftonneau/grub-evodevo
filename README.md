@@ -206,8 +206,13 @@ The install script includes more than **15 graphical parameters** besides
 `ScreenWidth`, `ScreenHeight`, `FontSize`, and `Wallpaper`. Their usage is
 explained in the comments after each assignment line.
 
-These parameters are ordered in terms of decreasing importance, so change them
-starting from the top, and only if the need arises.
+For example, the graphical parameters `Image`, `ImageLeft`, and `ImageTop`
+allow you to **add a custom image** (e.g., a logo or watermark) to the screen.
+You just need to put your image file in the wallpapers/ subdirectory, and assign
+the name of the file to `Image`. Your image will be displayed at its original
+size. `ImageLeft` and `ImageTop` should contain the X and Y coordinates (in
+pixels) of the top left corner of the image.
+
 
 # Advanced text configuration
 
