@@ -245,34 +245,23 @@ want.
 # Theme maintenance
 
 GRUB does not do font antialiasing natively, so EvoDevo uses a workaround to
-achieve non-pixelated menu entries. For each entry in your `grub.cfg` file, the
-install script builds a corresponding **fake entry**—a PNG picture that GRUB
-will display as an icon on the left side of the menu. The real entries are still
-present on the right, however, so EvoDevo masks them with a PNG image split from
-the background wallpaper.
+achieve non-pixelated menu entries. All of the entries visible in the themed
+menu are actually **fake entries** (i.e., antialised PNG images), while the
+real entries are hidden behind a copy of the background wallpaper. EvoDevo
+also inserts custom classes (i.e., annotations) in `grub.cfg` to tell GRUB
+to display the fake entries as menu icons.
 
-Also, EvoDevo adds custom classes (`--class menuitem1`, `--class menuitem2`,
-...) to the menu entries in `grub.cfg`. These classes are used to fetch the
-PNG pictures of the fake menu entries.
-
-Unfortunately, whenever your system overwrites `grub.cfg` (this will happen on
-any GRUB or kernel update, for example), the custom classes are wiped out and
-**the fake entries will not show up on the next reboot**:
+Unfortunately, whenever your system overwrites `grub.cfg` (this may happen
+on any kernel update, for example), the custom classes are wiped out, causing
+the EvoDevo menu to look empty:
 
 ![empty-menu](example-empty.png)
 
-This may look scary, but the real entries, although hidden, are still there and
-GRUB remains fully functional. Pressing the arrow keys, for example, will still
-move the focus up and down.
+This may look scary, but GRUB remains fully functional, and after booting as
+usual you will be able to restore EvoDevo by re-running `sudo ./install`.
 
-So you can just wait for your default entry to boot. After booting, you will
-be able to restore EvoDevo by running `sudo ./install`.
-
-TLDR: **Whenever your distribution updates GRUB**, run `sudo ./install.sh`
-to **restore the theme**.
-
-Do check carefully, however, for the possibility of breaking changes in
-GRUB. Your distribution should keep you informed about these.
+TLDR: **Whenever your distribution updates GRUB**, `sudo ./install.sh` should
+be run to **restore the theme to full visibility**.
 
 The theme can be uninstalled at any time by running `sudo ./uninstall.sh`.
 
