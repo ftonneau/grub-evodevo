@@ -43,20 +43,24 @@ Wallpaper='default.jpg'
 # subdirectory of the install folder, otherwise the file will not be detected.
 # If you choose option (b), don't forget the quotes around the color name.
 
-Image=
-# This parameter can be used to add a custom image to the screen. Your image
-# must be a valid JPEG or PNG file. Put it in the wallpapers/ subdirectory of
-# the install folder, and assign the name of the file to `Image`. For example:
-# Image='my logo.png'
-# The image will be displayed at its original size (i.e., without rescaling).
+Image_A=
+Image_A_Left=
+Image_A_Top=
+# These parameters can be used to add a custom image to the screen. Image_A
+# should be assigned the name of a valid JPEG or PNG file. Image_A_Left and
+# Image_A_Top should contain the X and Y coordinates (in pixels) of the top
+# left corner of the image. For example:
+# Image_A='my logo.png'
+# Image_A_Left=1000
+# Image_A_Top=250
+# Put your JPEG or PNG file in the images/ subdirectory of the install folder,
+# otherwise the image will not be detected.
 
-ImageLeft=
-ImageTop=
-# If you want to add a custom image (Image=...) to the screen, ImageLeft and
-# ImageTop allow you to specify the X, Y coordinates (in pixels) of the top
-# left corner of your image. For example:
-# ImageLeft=1000
-# ImageTop=250
+Image_B=
+Image_B_Left=
+Image_B_Top=
+# These parameters can be used to specify another custom image. The syntax is
+# the same as for Image_A.
 
 MenuStyle=wide
 # Possible values are 'narrow', 'wide', and 'maximal'. A narrow menu has rounded
@@ -535,16 +539,32 @@ convert_svg panel-front.png
 
 mv panel-back.png panel-front.png "$theme_path"
 
-# CUSTOM IMAGE (OPTIONAL)
+# CUSTOM IMAGES (OPTIONAL)
 
-if [ "$Image" ]; then
-    cp "wallpapers/$Image" "$theme_path" || stop "cannot find custom image"
+if [ "$Image_A" ]; then
+    cp "images/$Image_A" "$theme_path" || stop "cannot find custom image"
+    IMAGE_A="
+        + image {
+            left = $Image_A_Left
+            top = $Image_A_Top
+            file = \"$Image_A\"
+        }
+    "
 else
-    open_svg 1 1
-    convert_svg "$theme_path/transparent-dot.png"
-    Image=transparent-dot.png
-    ImageLeft=0
-    ImageTop=0
+    IMAGE_A=
+fi
+
+if [ "$Image_B" ]; then
+    cp "images/$Image_B" "$theme_path" || stop "cannot find custom image"
+    IMAGE_B="
+        + image {
+            left = $Image_B_Left
+            top = $Image_B_Top
+            file = \"$Image_B\"
+        }
+    "
+else
+    IMAGE_B=
 fi
 
 # PROGRESS BAR
@@ -572,11 +592,9 @@ terminal-top: "10%"
 terminal-width: "80%"
 terminal-height: "80%"
 
-+ image {
-    left = $ImageLeft
-    top = $ImageTop
-    file = "${Image}"
-}
+$IMAGE_A
+
+$IMAGE_B
 
 + image {
     left = $(xpos 0)

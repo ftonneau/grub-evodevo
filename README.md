@@ -60,16 +60,17 @@ the associated download icon.
 
 - Once evodevo.zip saved on your computer, put it in the directory you just created,
 and **unpack the archive** with `unzip evodevo.zip`. This will provide you with two
-shell scripts, `install.sh` and `uninstall.sh`, and two subdirectories, `data/` and
-`wallpapers/`.
+shell scripts, `install.sh` and `uninstall.sh`, and three subdirectories, `data/`,
+`images\`, and `wallpapers/`.
 
 - Also make sure that the install and uninstall scripts are executable (`chmod u+x
  install.sh uninstall.sh`).
 
 ## Note
 
-The `data/` subdirectory contains the SVG data needed to draw distro emblems. The
-`wallpapers/` subdirectory contains the default wallpaper.
+The `data/` subdirectory contains the SVG data needed to draw distro emblems.
+The `images\` subdirectory is available for custom images. The `wallpapers/`
+subdirectory contains the default wallpaper.
 
 
 # Basic configuration
@@ -200,27 +201,28 @@ Once you are satisfied with your configuration, **reboot your computer to have
 the EvoDevo GRUB theme show up**.
 
 
-# Advanced graphic configuration
+# Advanced configuration
 
-The install script includes more than **15 graphical parameters** besides
-`ScreenWidth`, `ScreenHeight`, `FontSize`, and `Wallpaper`. Their usage is
-explained in the comments after each assignment line.
+The install script includes more than **40 parameters** besides `ScreenWidth`,
+`ScreenHeight`, `FontSize`, and `Wallpaper`. Their usage is explained in the
+comments after each assignment line.
 
-For example, the graphical parameters `Image`, `ImageLeft`, and `ImageTop`
-allow you to **add a custom image** (e.g., a logo or watermark) to the screen.
-You just need to put your image file in the wallpapers/ subdirectory, and assign
-the name of the file to `Image`. Your image will be displayed at its original
-size. `ImageLeft` and `ImageTop` should contain the X and Y coordinates (in
+Most of the parameters are graphical. For example, the parameters `Image_A`,
+`Image_A_Left`, and `Image_A_Top` allow you to **add a custom image** (e.g., a
+logo or watermark) to the screen. You just need to put a JPEG or PNG file in the
+images/ subdirectory of the install folder, and assign the name of this file to
+`Image_A`. The image will be shown at its real size (i.e., without rescaling).
+`Image_A_Left` and `Image_A_Top` should contain the X and Y coordinates (in
 pixels) of the top left corner of the image.
 
+Another custom image, `Image_B`, can be added via the same procedure.
 
-# Advanced text configuration
+Other parameters are textual. For example, the **title**, as well as the **top
+and bottom messages**, of the GRUB menu can be configured.
 
-The **title**, as well as the **top and bottom messages**, of the GRUB menu can be
-configured. EvoDevo also allows you to modify the text of **up to ten menu entries**
-(or parts of menu entries) to your liking.
-
-To this end, the install script includes ten variables named:
+EvoDevo also allows you to rename **up to ten menu entries** (or parts of menu
+entries) to your liking. To this end, the install script includes ten variables
+named:
 
 ```
 Change_0=
@@ -241,6 +243,12 @@ Change_0='Kubuntu@Kunbuntu KDE/Wayland'
 will do the job. The left side of the @ symbol is the portion of text to be
 replaced, the right side of the @ symbol is the replacement string that you
 want.
+
+The parameters of the install script are ordered in terms of decreasing
+importance, and you do not need to change all of them to achieve good
+results. Proceed from the top to the bottom of the script, and change the
+value of a parameter only if the need arises.
+
 
 # Theme maintenance
 
