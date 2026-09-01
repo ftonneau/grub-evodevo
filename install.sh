@@ -676,7 +676,7 @@ BEGIN {
             title = substr(remainder, 1, second_quote_pos - 1)
             gsub("<", "\\&lt;", title) # sanitize title for SVG handling
             cmd_tail = substr(remainder, second_quote_pos + 2)
-            class = "--class menuitem" ++num
+            class = "--class evodevo_entry_" ++num
             line = cmd_head Space quote title quote Space class Space cmd_tail
             category = match(cmd_head, "menuentry") > 0 ? "ENTRY" : "SUBMENU"
             print category ":" title > "scan.txt"
@@ -703,23 +703,18 @@ BEGIN {
 
 mv custom.cfg "$grub_config_file" || stop "cannot update $grub_config_file"
 
-install_item() {
-    # $1: index; $2: category; $3: caption
-    open_svg $MenuWidth $ItemSquare
-    case $2 in
-        ENTRY) add_glyph $(datum "$3") $Tab 0 $IconFg ;;
-        SUBMENU) add_glyph more $Tab 0 $IconFg ;;
-    esac
-    add_text $((Tab + ItemSquare + Tab)) $((ItemSquare / 2)) "$3"
-    convert_svg "$icons_path/menuitem${1}.png"
-}
-
-printf %s 'Checking menu entries [may take a few seconds] ... '
+printf %s 'Building menu entries [may take a few seconds] ... '
 index=0; while read entry; do
     index=$((index + 1))
     category=${entry%%:*}
     caption=${entry#*:}
-    install_item $index "$category" "$caption"
+    open_svg $MenuWidth $ItemSquare
+    case $category in
+        ENTRY) add_glyph $(datum "$caption") $Tab 0 $IconFg ;;
+        SUBMENU) add_glyph more $Tab 0 $IconFg ;;
+    esac
+    add_text $((Tab + ItemSquare + Tab)) $((ItemSquare / 2)) "$caption"
+    convert_svg "$icons_path/evodevo_entry_${index}.png"
 done < scan.txt
 rm scan.txt
 rm tmp.svg
