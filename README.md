@@ -1,15 +1,15 @@
 # Grub EvoDevo
 
-Grub EvoDevo is a highly configurable GRUB theme with scalable graphics, background
-blurring, and antialiased true-type fonts. Any wallpaper can be used as theme
-background, and more than twenty graphical parameters (from menu size to colors,
+Grub EvoDevo is a configurable GRUB theme with scalable graphics, background
+blurring, and antialiased true-type fonts. EvoDevo can use any wallpaper as
+background, and more than 40 theme parameters (from menu placement to colors,
 transparency, and amount of blurring) can be customized.
 
-EvoDevo also allows you to modify the **text of your menu entries**, and does it
-perfectly safely because only the visual display changes (the real entries stay
-unaffected). In all cases, the install script auto-detects your GRUB entries and
-decorates them with the corresponding emblem. If a distro is not recognized, it
-is assigned a hashbang (#) as emblem.
+EvoDevo also allows you to **rename your menu entries**, and does it
+perfectly safely because only the visual display changes (the real entries
+stay unaffected). In all cases, the install script auto-detects your GRUB
+entries and decorates them with the corresponding emblem. If a distro is not
+recognized, it is assigned a hashbang (#) as emblem.
 
 ![example-narrow](example-narrow.jpg)
 
@@ -61,7 +61,7 @@ the associated download icon.
 - Once evodevo.zip saved on your computer, put it in the directory you just created,
 and **unpack the archive** with `unzip evodevo.zip`. This will provide you with two
 shell scripts, `install.sh` and `uninstall.sh`, and three subdirectories, `data/`,
-`images\`, and `wallpapers/`.
+`images/`, and `wallpapers/`.
 
 - Also make sure that the install and uninstall scripts are executable (`chmod u+x
  install.sh uninstall.sh`).
@@ -69,8 +69,8 @@ shell scripts, `install.sh` and `uninstall.sh`, and three subdirectories, `data/
 ## Note
 
 The `data/` subdirectory contains the SVG data needed to draw distro emblems.
-The `images\` subdirectory is available for custom images. The `wallpapers/`
-subdirectory contains the default wallpaper.
+The `images/` subdirectory will allow you to add up to two custom images to
+the screen. The `wallpapers/` subdirectory contains the default wallpaper.
 
 
 # Basic configuration
@@ -203,26 +203,25 @@ the EvoDevo GRUB theme show up**.
 
 # Advanced configuration
 
-The install script includes more than **40 parameters** besides `ScreenWidth`,
+The install script includes more than 40 parameters besides `ScreenWidth`,
 `ScreenHeight`, `FontSize`, and `Wallpaper`. Their usage is explained in the
 comments after each assignment line.
 
-Most of the parameters are graphical. For example, the parameters `Image_A`,
-`Image_A_Left`, and `Image_A_Top` allow you to **add a custom image** (e.g., a
-logo or watermark) to the screen. You just need to put a JPEG or PNG file in the
-images/ subdirectory of the install folder, and assign the name of this file to
-`Image_A`. The image will be shown at its real size (i.e., without rescaling).
-`Image_A_Left` and `Image_A_Top` should contain the X and Y coordinates (in
-pixels) of the top left corner of the image.
+Most parameters are graphical. For example, `Image_A`, `Image_A_Left`, and
+`Image_A_Top` allow you to **add a custom image** (e.g., an OS logo) to the boot
+screen. You just need to put a valid JPEG or PNG file in the images/ subdirectory
+of the install folder, assign the name of this file to `Image_A`, and assign two
+screen coordinates (in pixels) to `Image_A_Left` and `Image_A_Top`. The image will
+appear on the boot screen at the assigned position and at its real size (i.e.,
+without rescaling).
 
-Another custom image, `Image_B`, can be added via the same procedure.
+A **second custom image** can be added to the boot screen via `Image_B`,
+`Image_B_Left`, and `Image_B_Right `
 
 Other parameters are textual. For example, the **title**, as well as the **top
-and bottom messages**, of the GRUB menu can be configured.
-
-EvoDevo also allows you to rename **up to ten menu entries** (or parts of menu
-entries) to your liking. To this end, the install script includes ten variables
-named:
+and bottom messages**, of the GRUB menu can be configured.  EvoDevo also allows
+you to **rename up to ten menu entries** (or parts of menu entries). To this
+end, the install script includes ten variables named:
 
 ```
 Change_0=
@@ -244,10 +243,18 @@ will do the job. The left side of the @ symbol is the portion of text to be
 replaced, the right side of the @ symbol is the replacement string that you
 want.
 
-The parameters of the install script are ordered in terms of decreasing
-importance, and you do not need to change all of them to achieve good
-results. Proceed from the top to the bottom of the script, and change the
-value of a parameter only if the need arises.
+Theme parameters are ordered in terms of decreasing importance. Proceed from the
+top to the bottom of the install script, and change the value of a parameter only
+if the need arises.
+
+
+# Example
+
+Aside from basic wallpaper, menu color, transparency, and blurring customization,
+the following screenshot illustrates title renaming, entry renaming, and the use
+of a logo as custom image.
+
+![example-config](example-config.jpg)
 
 
 # Theme maintenance
