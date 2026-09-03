@@ -59,8 +59,7 @@ Image_A_Top=
 Image_B=
 Image_B_Left=
 Image_B_Top=
-# These parameters can be used to specify another custom image. The syntax is
-# the same as for Image_A.
+# Use these parameters to add a second custom image to the screeen.
 
 MenuStyle=wide
 # Possible values are 'narrow', 'wide', and 'maximal'. A narrow menu has rounded
@@ -541,30 +540,28 @@ mv panel-back.png panel-front.png "$theme_path"
 
 # CUSTOM IMAGES (OPTIONAL)
 
+CUSTOM_IMAGE_A=
 if [ "$Image_A" ]; then
-    cp "images/$Image_A" "$theme_path" || stop "cannot find custom image"
-    IMAGE_A="
+    cp "images/$Image_A" "$theme_path" || stop "cannot find image $Image_A"
+    CUSTOM_IMAGE_A="
         + image {
             left = $Image_A_Left
             top = $Image_A_Top
             file = \"$Image_A\"
         }
     "
-else
-    IMAGE_A=
 fi
 
+CUSTOM_IMAGE_B=
 if [ "$Image_B" ]; then
-    cp "images/$Image_B" "$theme_path" || stop "cannot find custom image"
-    IMAGE_B="
+    cp "images/$Image_B" "$theme_path" || stop "cannot find image $Image_B"
+    CUSTOM_IMAGE_B="
         + image {
             left = $Image_B_Left
             top = $Image_B_Top
             file = \"$Image_B\"
         }
     "
-else
-    IMAGE_B=
 fi
 
 # PROGRESS BAR
@@ -592,9 +589,9 @@ terminal-top: "10%"
 terminal-width: "80%"
 terminal-height: "80%"
 
-$IMAGE_A
+$CUSTOM_IMAGE_A
 
-$IMAGE_B
+$CUSTOM_IMAGE_B
 
 + image {
     left = $(xpos 0)
