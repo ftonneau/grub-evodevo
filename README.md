@@ -216,7 +216,7 @@ appear on the boot screen at the assigned position and at its real size (i.e.,
 without rescaling).
 
 A **second custom image** can be added to the boot screen via `Image_B`,
-`Image_B_Left`, and `Image_B_Right `
+`Image_B_Left`, and `Image_B_Top `
 
 Other parameters are textual. For example, the **title**, as well as the **top
 and bottom messages**, of the GRUB menu can be configured.  EvoDevo also allows
