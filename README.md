@@ -3,7 +3,7 @@
 Grub EvoDevo is a highly configurable GRUB theme with scalable graphics,
 background blurring, and antialiased true-type fonts. EvoDevo can use any
 wallpaper as background, and more than **40 theme parameters** (e.g., menu size,
-placement, color, transparency, and amount of blurring) can be customized.
+placement, color, transparency, and blurring) can be customized.
 
 EvoDevo allows you to **rename your menu entries**, and does it perfectly safely
 because only the visual display changes (the real entries stay unaffected). In
@@ -190,10 +190,10 @@ of the configured theme**. The preview is shown at the size of the screen at boo
 time, and for simplicity, the menu displays only one entry (a fake one: "Example
 of entry").
 
-If you do **not** see the `preview.png successfully generated!` message, then
-something went wrong (and the script will probably tell you what). The worst kind
-of error would be to forget to quote a `VALUE WITH BLANKS IN IT` or to forget a
-closing quote (as this would wreak havoc on the whole script).
+If you do **not** see the message about `preview.png`, then something went wrong
+(and the script will probably tell you what). The worst kind of error would be to
+forget to quote a `VALUE WITH BLANKS IN IT` or to forget a closing quote (as this
+would wreak havoc on the whole script).
 
 Once you are satisfied with your configuration, type:
 
@@ -204,9 +204,11 @@ sudo ./install.sh
 to **actually install the theme**. If everything goes well, the script will
 conclude with:
 
+```
 -----------------------------
 Theme installed successfully!
 -----------------------------
+```
 
 and Grub EvoDevo will show up on your next reboot.
 
