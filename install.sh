@@ -152,17 +152,30 @@ SystemRegex='bios|firmware|setting|setup|uefi'
 
 # ***Do not change anything below this line.***
 
-# PROGRAM START
+# ------------------------------------------------------------
+# Program start
+# ------------------------------------------------------------
 
 stop() {
     printf %s\\n "Install stopped: $1" >&2
     exit 1
 }
 
-root_id=0
-user_id=$(id -u)
-if [ "$user_id" -ne "$root_id" ]; then
-    stop 'this script should be run as root, sudo ./install.sh'
+if [ "$*" = -preview ]; then
+    mode=preview
+elif [ $# -eq 0 ]; then
+    mode=install
+else
+    echo 'Usage: `./install.sh -preview` or `sudo ./install.sh`' >&2
+    exit 1
+fi
+
+if [ "$mode" = install ]; then
+    root_id=0
+    user_id=$(id -u)
+    if [ "$user_id" -ne "$root_id" ]; then
+        stop 'this script should be run as root, sudo ./install.sh'
+    fi
 fi
 
 command -v grub-mkconfig >/dev/null || stop "GRUB setup not supported"
@@ -175,6 +188,7 @@ grub_config_file=/boot/grub/grub.cfg
 case $Wallpaper in
 '#'*)
     using_wallpaper=
+    WallColor=$Wallpaper
     ;;
 *)
     using_wallpaper=yes
@@ -202,11 +216,17 @@ theme_path=/usr/share/grub/themes/evodevo
 theme_file="$theme_path/theme.txt"
 icons_path="$theme_path/icons"
 
-rm -r "$theme_path" 2>/dev/null
-mkdir -p "$theme_path"
-mkdir -p "$icons_path"
+if [ "$mode" = install ]; then
+    rm -rf "$theme_path"
+    mkdir -p "$theme_path"
+    mkdir -p "$icons_path"
+fi
 
-# DEFINITIONS
+rm -f *png tmp.svg      # clean any residue from other install
+
+# ------------------------------------------------------------
+# Computation of graphical properties
+# ------------------------------------------------------------
 
 ItemSquare=$((FontSize * 22/10))
 [ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1))
@@ -340,10 +360,12 @@ if [ "$MenuStyle" = maximal ]; then
     Sigma=0
 fi
 
-# BACKGROUND PIXELS
+# ------------------------------------------------------------
+# Background pixel covering (install mode)
+# ------------------------------------------------------------
 
 open_svg() {
-    # $1: width, $2: height, $3 (optional): fill, $4 (optional): opacity
+    # $1: width; $2: height; $3 (optional): fill; $4 (optional): opacity
     printf %s "
         <svg xmlns='http://www.w3.org/2000/svg' width='$1' height='$2'
          xmlns:xlink='http://www.w3.org/1999/xlink'>
@@ -361,63 +383,73 @@ convert_svg() {
     mv tmp.png "$1" || stop 'could not move tmp.png to destination.'
 }
 
-open_svg 1 1 gray
-convert_svg "$theme_path/desktop.png" # Cannot be left empty, on the pain of
-# screen-rendering bugs!
+if [ "$mode" = install ]; then
+    # We cover the desktop background by a PNG (otherwise the GRUB may show
+    # bugs), and we cover the background of the focused item.
+    open_svg 1 1 gray
+    convert_svg "$theme_path/desktop.png"
+    open_svg 1 1 "$FocusBg" "$FocusOpacity"
+    convert_svg "$theme_path/item-selected-c.png"
+fi
 
-open_svg 1 1 "$FocusBg" "$FocusOpacity"
-convert_svg "$theme_path/item-selected-c.png"
-
-# SCREEN COVERING
+# ------------------------------------------------------------
+# Wallpaper and split-screen handling
+# ------------------------------------------------------------
 
 [ "$Wallpaper" ] || stop 'no wallpaper or background specified.'
 
 if [ "$using_wallpaper" ]; then
+    # We build a real wallpaper image.
     [ -f "wallpapers/$Wallpaper" ] || stop "cannot find $Wallpaper"
     echo 'Preparing wallpaper [may take a few seconds] ... '
     $change \
     "wallpapers/$Wallpaper" -geometry "${ScreenWidth}x${ScreenHeight}!" screen.png \
     || stop "cannot resize $Wallpaper"
+else
+    # We create a monochromatic, screen-size rectangle.
+    open_svg "$ScreenWidth" "$ScreenHeight" "$WallColor"
+    convert_svg screen.png
 fi
 
-# The full-size wallpaper picture, screen.png, must be split in two parts,
-# left.png and right.png. The right part will be be used to cover the text
-# side of the actual menu entries.
-
 crop() {
-    # $1: input file, $2: width, $3: height, $4: x, $5: y, $6: destination
+    # $1: input file; $2: width; $3: height; $4: x; $5: y; $6: destination
     $change "$1" -crop "$2x$3+$4+$5" "$6"
 }
 
 ScreenL=$(xpos $PanelWidth)
 ScreenR=$((ScreenWidth - ScreenL))
-if [ "$using_wallpaper" ]; then
-    # We split a real PNG image in left and right parts.
-    crop screen.png "$ScreenL" "$ScreenHeight" 0 0 "$theme_path/left.png"
-    crop screen.png "$ScreenR" "$ScreenHeight" "$ScreenL" 0 "$theme_path/right.png"
-else
-    # "$Wallpaper" is a single, extensible color.
-    open_svg 1 1 "$Wallpaper"
-    convert_svg "$theme_path/left.png"
-    open_svg 1 1 "$Wallpaper"
-    convert_svg "$theme_path/right.png"
+
+if [ "$mode" = install ]; then
+    if [ "$using_wallpaper" ]; then
+        # We split the real wallpaper in left and right parts.
+        crop screen.png "$ScreenL" "$ScreenHeight" 0 0 "$theme_path/left.png"
+        crop screen.png "$ScreenR" "$ScreenHeight" "$ScreenL" 0 "$theme_path/right.png"
+    else
+        # Each split is made from a single, extensible color pixel.
+        open_svg 1 1 "$WallColor"
+        convert_svg "$theme_path/left.png"
+        open_svg 1 1 "$WallColor"
+        convert_svg "$theme_path/right.png"
+    fi
 fi
 
-# PANEL HANDLING
+# ------------------------------------------------------------
+# Panel handling
+# ------------------------------------------------------------
 
 add_str() {
     printf %s\\n "$1" >> tmp.svg
 }
 
 add_box() {
-    # $1: x, $2: y, $3: width, $4: height, $5: fill, $6 (optional): opacity,
+    # $1: x; $2: y; $3: width; $4: height; $5: fill; $6 (optional): opacity;
     # $7 (optional): corner radius
     add_str "<rect x='$1' y='$2' width='$3' height='$4' fill='$5'
         fill-opacity='${6:-1}' rx='${7:-0}' ry='${7:-0}' stroke-width='0'/>"
 }
 
 add_band() {
-    # $1: y, $2: height, $3: fill
+    # $1: y; $2: height; $3: fill
     add_str "<rect x='0' y='$1' width='100%' height='$2' fill='$3'
         fill-opacity='$4' stroke-width='0' mask='url(#cut)'/>"
 }
@@ -428,21 +460,22 @@ add_image() {
 }
 
 if [ "$using_wallpaper" ]; then
-    # We must cut a rectangle from the background screen.
+    # We cut a rectangle from the processed background screen.
     echo 'Preparing menu background [may take a few seconds] ... '
-    [ "$Sigma" = 0 ] || $smooth "$((Sigma * 3))x${Sigma}" screen.png
-    crop screen.png "$PanelWidth" "$PanelHeight" "$PanelX" "$PanelY" panel-base.png
-    rm screen.png
+    cp screen.png surface.png
+    [ "$Sigma" = 0 ] || $smooth "$((Sigma * 3))x${Sigma}" surface.png
+    crop surface.png "$PanelWidth" "$PanelHeight" "$PanelX" "$PanelY" panel-base.png
+    rm surface.png
 else
     # We make a simple, wallpaper-colored rectangle.
     open_svg "$PanelWidth" "$PanelHeight" "$Wallpaper"
     convert_svg panel-base.png
 fi
 
-# Menu entries form a middle layer sandwiched between two layers of panel
-# rendering. The bottom layer, panel-back.png, is a cutout of the blurred
-# wallpaper. The top layer, panel-front.png, is a copy of panel-back.png
-# with hollow contours to let the menu-entry graphics show through.
+# Menu entries are sandwiched between two layers of panel rendering. The
+# bottom layer, panel-back.png, is a cutout of the background. The top layer,
+# panel-front.png, is a copy of panel-back.png with hollow contours to let the
+# menu entries show through.
 
 open_svg $PanelWidth $PanelHeight
 add_str "<defs> <mask id='cut'>"
@@ -536,35 +569,74 @@ add_glyph bottom $SideTab $BottomNavGuide $TextFg
 add_text $MsgStop $BottomGuide "$EnterMsg" end
 convert_svg panel-front.png
 
-mv panel-back.png panel-front.png "$theme_path"
+if [ "$mode" = install ]; then
+    mv panel-back.png panel-front.png "$theme_path"
+fi
 
-# CUSTOM IMAGES (OPTIONAL)
+# ------------------------------------------------------------
+# Handling of custom images (optional)
+# ------------------------------------------------------------
 
-CUSTOM_IMAGE_A=
+make_copy() {
+    # $1: image filename; $2: destination path
+    cp "images/$1" "$2" || stop "cannot find $1"
+}
+
+get_resolution() {
+    # $1: image filename
+    file "$1" | awk '
+        {
+            sub(/density[^,]+,/, "", $0)    # remove "density DDDxDDD" noise
+            image_dims="[[:digit:]]+ ?x ?[[:digit:]]+"
+            if (match($0, image_dims) > 0) {
+                info = substr($0, RSTART, RLENGTH)
+                gsub(/ /, "", info)
+                print(info)
+            }
+            else print("100x100")           # fake values if nothing detected
+        }
+    '
+}
+
 if [ "$Image_A" ]; then
-    cp "images/$Image_A" "$theme_path" || stop "cannot find image $Image_A"
-    CUSTOM_IMAGE_A="
-        + image {
-            left = $Image_A_Left
-            top = $Image_A_Top
-            file = \"$Image_A\"
-        }
-    "
+    if [ "$mode" = preview ]; then
+        make_copy "$Image_A" .
+        info=$(get_resolution "$Image_A")
+        ia_wid=${info%x*}
+        ia_hei=${info#*x}
+    else
+        make_copy "$Image_A" "$theme_path"
+        CUSTOM_IMAGE_A="
+            + image {
+                left = $Image_A_Left
+                top = $Image_A_Top
+                file = \"$Image_A\"
+            }
+        "
+    fi
 fi
 
-CUSTOM_IMAGE_B=
 if [ "$Image_B" ]; then
-    cp "images/$Image_B" "$theme_path" || stop "cannot find image $Image_B"
-    CUSTOM_IMAGE_B="
-        + image {
-            left = $Image_B_Left
-            top = $Image_B_Top
-            file = \"$Image_B\"
-        }
-    "
+    if [ "$mode" = preview ]; then
+        make_copy "$Image_B" .
+        info=$(get_resolution "$Image_B")
+        ib_wid=${info%x*}
+        ib_hei=${info#*x}
+    else
+        make_copy "$Image_B" "$theme_path"
+        CUSTOM_IMAGE_B="
+            + image {
+                left = $Image_B_Left
+                top = $Image_B_Top
+                file = \"$Image_B\"
+            }
+        "
+    fi
 fi
 
-# PROGRESS BAR
+# ------------------------------------------------------------
+# Progress bar handling
+# ------------------------------------------------------------
 
 make_bar() {
     # $1: color; $2: filename
@@ -573,10 +645,65 @@ make_bar() {
     convert_svg "$theme_path/$2"
 }
 
-make_bar $BarBg bar-default-c.png
-make_bar $BarFg bar-highlighted-c.png
+if [ "$mode" = preview ]; then
+    open_svg "$BarWidth" "$BarHeight" "$BarBg"
+    add_box 0 0 "$((BarWidth * 3/4))" "$BarHeight" "$BarFg"
+    convert_svg bar.png
+else
+    make_bar $BarBg bar-default-c.png
+    make_bar $BarFg bar-highlighted-c.png
+fi
 
-# THEME FILE
+# ------------------------------------------------------------
+# Preview composition (preview mode)
+# ------------------------------------------------------------
+
+add_atom() {
+    # $1: x, $2: y, $3: width, $4: height, $5: filename
+    add_str "<image x='$1' y='$2' width='$3' height='$4' xlink:href='$5'/>"
+}
+
+if [ "$mode" = preview ]; then
+    open_svg $ScreenWidth $ScreenHeight
+    add_atom 0 0 $ScreenWidth $ScreenHeight screen.png
+
+    add_atom $(xpos 0) $(ypos 0) $PanelWidth $PanelHeight panel-back.png
+
+    add_box $(xpos $SideMargin) $(ypos $TopMargin) $MenuWidth $ItemSquare \
+        $FocusBg $FocusOpacity
+    add_glyph unknown $(xpos $SideTab) $(ypos $TopMargin) $IconFg
+    add_text \
+        $(xpos $((SideTab + ItemSquare + Tab))) \
+        $(ypos $((TopMargin + ItemSquare / 2))) 'Example of menu entry'
+
+    add_atom $(xpos 0) $(ypos 0) $PanelWidth $PanelHeight panel-front.png
+
+    if [[ $Image_A ]]; then
+        add_atom "$Image_A_Left" "$Image_A_Top" $ia_wid $ia_hei "$Image_A"
+    fi
+    if [[ $Image_B ]]; then
+        add_atom "$Image_B_Left" "$Image_B_Top" $ib_wid $ib_hei "$Image_B"
+    fi
+
+    add_atom $(xpos $BarTab) $(ypos $BarLevel) "$BarWidth" "$BarHeight" bar.png
+
+    convert_svg preview.png
+
+    rm screen.png panel*png bar.png
+    rm tmp.svg
+cat << DOC
+
+-----------------------------
+preview.png successfully generated!
+-----------------------------
+DOC
+fi
+
+# ------------------------------------------------------------
+# Theme composition (install mode)
+# ------------------------------------------------------------
+
+[ "$mode" = preview ] && exit 0
 
 {
 cat << DOC
@@ -649,8 +776,6 @@ $CUSTOM_IMAGE_B
 DOC
 } > "$theme_file"
 
-# CONFIGURATION GENERATION
-
 posix_sed() {
     # $1: sed expression, $2: target file
     sed "$1" "$2" > tmp.txt && mv tmp.txt "$2"
@@ -665,8 +790,6 @@ else
 fi
 
 grub-mkconfig -o "$grub_config_file" || stop 'could not configure GRUB.'
-
-# MENU ENTRIES REPLACEMENT
 
 rm custom.cfg scan.txt 2>/dev/null
 
@@ -739,16 +862,5 @@ cat << DOC
 -----------------------------
 Theme installed successfully!
 -----------------------------
-You can now reboot your computer to see what the theme looks like.
-Alternatively, if instead of rebooting you just want to preview
-the results, you can use any image viewer to open:
-
-/usr/share/grub/themes/evodevo/panel-back.png
-/usr/share/grub/themes/evodevo/panel-front.png
-
-and
-
-/usr/share/grub/themes/evodevo/icons/*png
-
 DOC
 
