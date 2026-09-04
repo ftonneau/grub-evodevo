@@ -1,15 +1,19 @@
 # Grub EvoDevo
 
-Grub EvoDevo is a configurable GRUB theme with scalable graphics, background
-blurring, and antialiased true-type fonts. EvoDevo can use any wallpaper as
-background, and more than 40 theme parameters (from menu placement to colors,
-transparency, and amount of blurring) can be customized.
+Grub EvoDevo is a highly configurable GRUB theme with scalable graphics,
+background blurring, and antialiased true-type fonts. EvoDevo can use any
+wallpaper as background, and more than **40 theme parameters** (e.g., menu size,
+placement, color, transparency, and amount of blurring) can be customized.
 
-EvoDevo also allows you to **rename your menu entries**, and does it
-perfectly safely because only the visual display changes (the real entries
-stay unaffected). In all cases, the install script auto-detects your GRUB
-entries and decorates them with the corresponding emblem. If a distro is not
-recognized, it is assigned a hashbang (#) as emblem.
+EvoDevo allows you to **rename your menu entries**, and does it perfectly safely
+because only the visual display changes (the real entries stay unaffected). In
+all cases, the install script auto-detects menu entries and decorates them with
+the corresponding emblem. If a distro is not recognized, it is assigned a
+hashbang (#) as emblem.
+
+EvoDevo also allows you to **preview your theme** without rebooting and without
+needing to install a virtual machine. EvoDevo's preview facility speeds up the
+configuration process considerably.
 
 ![example-narrow](example-narrow.jpg)
 
@@ -164,41 +168,47 @@ to the correct dimensions. To avoid possible distortions, however, your wallpape
 aspect ratio should preferably match that of the boot-time screen.
 
 
-# First check
+# Theme preview
 
 Once done with the `ScreenWidth`, `ScreenHeight`, `FontSize`, and `Wallpaper`
-assignments, **save the install script and run it as root**:
+assignments, save the install script, go back to your terminal, and type:
+
+```
+./install.sh -preview
+```
+
+If everything goes well, the script will conclude with:
+
+```
+-----------------------------
+preview.png successfully generated!
+-----------------------------
+```
+
+Opening `preview.png` in your favorite image viewer will then show you **a preview
+of the configured theme**. The preview is shown at the size of the screen at boot
+time, and for simplicity, the menu displays only one entry (a fake one: "Example
+of entry").
+
+If you do **not** see the `preview.png successfully generated!` message, then
+something went wrong (and the script will probably tell you what). The worst kind
+of error would be to forget to quote a `VALUE WITH BLANKS IN IT` or to forget a
+closing quote (as this would wreak havoc on the whole script).
+
+Once you are satisfied with your configuration, type:
 
 ```
 sudo ./install.sh
 ```
 
-If everything goes well, the script will conclude with the following
-message:
+to **actually install the theme**. If everything goes well, the script will
+conclude with:
 
-```
 -----------------------------
 Theme installed successfully!
 -----------------------------
-You can now reboot your computer to see what the theme looks like.
-Alternatively, if instead of rebooting you just want to preview
-the results, you can use any image viewer to open:
 
-/usr/share/grub/themes/evodevo/panel-back.png
-/usr/share/grub/themes/evodevo/panel-front.png
-
-and
-
-/usr/share/grub/themes/evodevo/icons/*png
-```
-
-If you do **not** see this message, then something went wrong (and the script will
-probably tell you what). A dependency may be missing, for example. The worst kind
-of error would be to forget to quote a `VALUE WITH BLANKS IN IT` or to forget a
-closing quote (as this would wreak havoc on the whole shell script).
-
-Once you are satisfied with your configuration, **reboot your computer to have
-the EvoDevo GRUB theme show up**.
+and Grub EvoDevo will show up on your next reboot.
 
 
 # Advanced configuration
