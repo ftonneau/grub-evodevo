@@ -222,15 +222,16 @@ if [ "$mode" = install ]; then
     mkdir -p "$icons_path"
 fi
 
-rm -f *png tmp.svg      # clean any residue from other install
+rm -f custom.cfg scan.txt *png tmp.svg  # clean any residue from other install
 
 # ------------------------------------------------------------
-# Computation of graphical properties
+# Derived graphical values
 # ------------------------------------------------------------
 
 ItemSquare=$((FontSize * 22/10))
-[ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1))
+[ $((ItemSquare % 2)) -eq 1 ] && ItemSquare=$((ItemSquare + 1)) # => even number
 LargerSize=$((FontSize * 15/10))
+HalfSquare=$((ItemSquare / 2))
 Tiny=2
 
 case $MenuStyle in
@@ -238,7 +239,7 @@ narrow)
     SideMargin=0
     HeaderHeight=$((FontSize * 28/10))
     BottomMargin=$((FontSize * 32/10))
-    PanelRadius=$((ItemSquare / 2))
+    PanelRadius=$HalfSquare
     ItemRadius=0
     ;;
 *)
@@ -246,7 +247,7 @@ narrow)
     HeaderHeight=0
     BottomMargin=$((FontSize * 50/10))
     PanelRadius=0
-    ItemRadius=$((ItemSquare / 2))
+    ItemRadius=$HalfSquare
     ;;
 esac
 case $MenuStyle in
@@ -278,7 +279,7 @@ BottomNavGuide=$((BottomGuide - ItemSquare / 2))
 MenuWidth=$((ScreenWidth * MenuPercent / 100))
 PanelWidth=$((SideMargin + MenuWidth + SideMargin))
 
-Tab=$((ItemSquare / 2))
+Tab=$HalfSquare
 SideTab=$((SideMargin + Tab))
 case $MenuStyle in
 narrow|wide)
@@ -294,6 +295,8 @@ narrow|wide)
 esac
 MsgStop=$((PanelWidth - SideTab - PanelRadius))
 
+GlyphPos=$Tab
+CaptionPos=$((Tab + ItemSquare + Tab))
 GlyphScale=$(awk "BEGIN { print $ItemSquare * 0.042 }")
 
 BarTab=$((PanelWidth * 1/10))
@@ -312,7 +315,6 @@ case $YPercent in
 esac
 
 xpos() { printf %s $((PanelX + $1)); }
-
 ypos() { printf %s $((PanelY + $1)); }
 
 rgb() {
@@ -393,7 +395,7 @@ if [ "$mode" = install ]; then
 fi
 
 # ------------------------------------------------------------
-# Wallpaper and split-screen handling
+# Wallpaper and screen splits
 # ------------------------------------------------------------
 
 [ "$Wallpaper" ] || stop 'no wallpaper or background specified.'
@@ -421,7 +423,7 @@ ScreenR=$((ScreenWidth - ScreenL))
 
 if [ "$mode" = install ]; then
     if [ "$using_wallpaper" ]; then
-        # We split the real wallpaper in left and right parts.
+        # Each split is a cut from the real wallpaper image.
         crop screen.png "$ScreenL" "$ScreenHeight" 0 0 "$theme_path/left.png"
         crop screen.png "$ScreenR" "$ScreenHeight" "$ScreenL" 0 "$theme_path/right.png"
     else
@@ -434,7 +436,7 @@ if [ "$mode" = install ]; then
 fi
 
 # ------------------------------------------------------------
-# Panel handling
+# Menu panel
 # ------------------------------------------------------------
 
 add_str() {
@@ -468,7 +470,7 @@ if [ "$using_wallpaper" ]; then
     rm surface.png
 else
     # We make a simple, wallpaper-colored rectangle.
-    open_svg "$PanelWidth" "$PanelHeight" "$Wallpaper"
+    open_svg "$PanelWidth" "$PanelHeight" "$WallColor"
     convert_svg panel-base.png
 fi
 
@@ -498,10 +500,10 @@ add_text() {
 }
 
 add_glyph() {
-    # $1: filename; $2: x; $3: y; $4: color. Raw glyph area is 24 x 24 pixels,
+    # $1: x; $2: y; $3: glyph name; $4: color. Raw glyph area is 24x24 pixels,
     # so we must first center the glyph by (-12, -12).
-    add_str "<path d='$(cat data/$1)'
-         transform='translate($(($2 + ItemSquare/2)), $(($3 + ItemSquare/2)))
+    add_str "<path d='$(cat data/$3)'
+         transform='translate($(($1 + HalfSquare)), $(($2 + HalfSquare)))
          scale($GlyphScale) translate(-12, -12)' stroke-width='0'
          fill-rule='evenodd' fill='$4'/>"
 }
@@ -563,9 +565,9 @@ if [ "$MenuStyle" = maximal ]; then
         x1='$SideTab' y1='$LineGuide' x2='$MsgStop' y2='$LineGuide'
     />"
 fi
-add_glyph top $SideTab $TopNavGuide $TextFg
+add_glyph $SideTab $TopNavGuide top $TextFg
 add_text $MsgStop $TopGuide "$CommandMsg" end
-add_glyph bottom $SideTab $BottomNavGuide $TextFg
+add_glyph $SideTab $BottomNavGuide bottom $TextFg
 add_text $MsgStop $BottomGuide "$EnterMsg" end
 convert_svg panel-front.png
 
@@ -574,7 +576,7 @@ if [ "$mode" = install ]; then
 fi
 
 # ------------------------------------------------------------
-# Handling of custom images (optional)
+# Custom images (optional)
 # ------------------------------------------------------------
 
 make_copy() {
@@ -598,12 +600,15 @@ get_resolution() {
     '
 }
 
+CUSTOM_IMAGE_A=
+CUSTOM_IMAGE_B=
+
 if [ "$Image_A" ]; then
     if [ "$mode" = preview ]; then
         make_copy "$Image_A" .
         info=$(get_resolution "$Image_A")
-        ia_wid=${info%x*}
-        ia_hei=${info#*x}
+        img_a_w=${info%x*}
+        img_a_h=${info#*x}
     else
         make_copy "$Image_A" "$theme_path"
         CUSTOM_IMAGE_A="
@@ -620,8 +625,8 @@ if [ "$Image_B" ]; then
     if [ "$mode" = preview ]; then
         make_copy "$Image_B" .
         info=$(get_resolution "$Image_B")
-        ib_wid=${info%x*}
-        ib_hei=${info#*x}
+        img_b_w=${info%x*}
+        img_b_h=${info#*x}
     else
         make_copy "$Image_B" "$theme_path"
         CUSTOM_IMAGE_B="
@@ -635,7 +640,7 @@ if [ "$Image_B" ]; then
 fi
 
 # ------------------------------------------------------------
-# Progress bar handling
+# Progress bar
 # ------------------------------------------------------------
 
 make_bar() {
@@ -655,7 +660,7 @@ else
 fi
 
 # ------------------------------------------------------------
-# Preview composition (preview mode)
+# Preview composition (preview mode only)
 # ------------------------------------------------------------
 
 add_atom() {
@@ -663,34 +668,39 @@ add_atom() {
     add_str "<image x='$1' y='$2' width='$3' height='$4' xlink:href='$5'/>"
 }
 
+xshift() {
+    value=${1:-0}
+    printf %s $((PanelX + SideMargin + $value))
+}
+
+yshift() {
+    value=${1:-0}
+    printf %s $((PanelY + TopMargin + $value))
+}
+
 if [ "$mode" = preview ]; then
     open_svg $ScreenWidth $ScreenHeight
     add_atom 0 0 $ScreenWidth $ScreenHeight screen.png
 
     add_atom $(xpos 0) $(ypos 0) $PanelWidth $PanelHeight panel-back.png
-
-    add_box $(xpos $SideMargin) $(ypos $TopMargin) $MenuWidth $ItemSquare \
-        $FocusBg $FocusOpacity
-    add_glyph unknown $(xpos $SideTab) $(ypos $TopMargin) $IconFg
-    add_text \
-        $(xpos $((SideTab + ItemSquare + Tab))) \
-        $(ypos $((TopMargin + ItemSquare / 2))) 'Example of menu entry'
-
+    add_box $(xshift) $(yshift) $MenuWidth $ItemSquare $FocusBg $FocusOpacity
+    add_glyph $(xshift $GlyphPos) $(yshift) unknown $IconFg
+    add_text $(xshift $CaptionPos) $(yshift $HalfSquare) "Example of entry"
     add_atom $(xpos 0) $(ypos 0) $PanelWidth $PanelHeight panel-front.png
 
-    if [[ $Image_A ]]; then
-        add_atom "$Image_A_Left" "$Image_A_Top" $ia_wid $ia_hei "$Image_A"
+    if [ "$Image_A" ]; then
+        add_atom "$Image_A_Left" "$Image_A_Top" $img_a_w $img_a_h "$Image_A"
     fi
-    if [[ $Image_B ]]; then
-        add_atom "$Image_B_Left" "$Image_B_Top" $ib_wid $ib_hei "$Image_B"
+    if [ "$Image_B" ]; then
+        add_atom "$Image_B_Left" "$Image_B_Top" $img_b_w $img_b_h "$Image_B"
     fi
 
     add_atom $(xpos $BarTab) $(ypos $BarLevel) "$BarWidth" "$BarHeight" bar.png
-
     convert_svg preview.png
 
-    rm screen.png panel*png bar.png
-    rm tmp.svg
+    [ "$Image_A" ] && rm "$Image_A"
+    [ "$Image_B" ] && rm "$Image_B"
+    rm screen.png panel*png bar.png tmp.svg
 cat << DOC
 
 -----------------------------
@@ -700,10 +710,25 @@ DOC
 fi
 
 # ------------------------------------------------------------
-# Theme composition (install mode)
+# Theme composition (install mode only)
 # ------------------------------------------------------------
 
 [ "$mode" = preview ] && exit 0
+
+posix_sed() {
+    # $1: sed expression, $2: target file
+    sed "$1" "$2" > tmp.txt && mv tmp.txt "$2"
+    [ "$?" -eq 0 ] || stop 'could not perform replacement.'
+}
+
+# Prepare control file and theme file.
+
+posix_sed '/GRUB_BACKGROUND/s,^.*$,#GRUB_BACKGROUND="wallpaper",' "$grub_control"
+if grep -q 'GRUB_THEME' "$grub_control"; then
+    posix_sed "/GRUB_THEME/s,^.*$,GRUB_THEME=$theme_file," "$grub_control"
+else
+    printf %s\\n "GRUB_THEME=$theme_file" >> "$grub_control"
+fi
 
 {
 cat << DOC
@@ -776,22 +801,10 @@ $CUSTOM_IMAGE_B
 DOC
 } > "$theme_file"
 
-posix_sed() {
-    # $1: sed expression, $2: target file
-    sed "$1" "$2" > tmp.txt && mv tmp.txt "$2"
-    [ "$?" -eq 0 ] || stop 'could not perform replacement.'
-}
-
-posix_sed '/GRUB_BACKGROUND/s,^.*$,#GRUB_BACKGROUND="wallpaper",' "$grub_control"
-if grep -q 'GRUB_THEME' "$grub_control"; then
-    posix_sed "/GRUB_THEME/s,^.*$,GRUB_THEME=$theme_file," "$grub_control"
-else
-    printf %s\\n "GRUB_THEME=$theme_file" >> "$grub_control"
-fi
+# Create GRUB configuration from control file and theme file. Then scan the
+# configuration to create a list of menu entries.
 
 grub-mkconfig -o "$grub_config_file" || stop 'could not configure GRUB.'
-
-rm custom.cfg scan.txt 2>/dev/null
 
 < "$grub_config_file" awk '
 BEGIN {
@@ -826,6 +839,8 @@ BEGIN {
 
 [ -f scan.txt ] || stop 'no captions generated.'
 
+# Use transformations to correct and/or customize EvoDevo's list of entries.
+
 [ -z "$Repair" ] || posix_sed "s@${Repair}@g" scan.txt
 
 [ -z "$Change_0" ] || posix_sed "s@${Change_0}@g" scan.txt
@@ -841,6 +856,8 @@ BEGIN {
 
 mv custom.cfg "$grub_config_file" || stop "cannot update $grub_config_file"
 
+# Finally, build graphical entries (i.e., entry icons) from scan file.
+
 printf %s 'Building menu entries [may take a few seconds] ... '
 index=0; while read entry; do
     index=$((index + 1))
@@ -848,14 +865,15 @@ index=0; while read entry; do
     caption=${entry#*:}
     open_svg $MenuWidth $ItemSquare
     case $category in
-        ENTRY) add_glyph $(datum "$caption") $Tab 0 $IconFg ;;
-        SUBMENU) add_glyph more $Tab 0 $IconFg ;;
+        ENTRY) glyph=$(datum "$caption") ;;
+        SUBMENU) glyph=more ;;
     esac
-    add_text $((Tab + ItemSquare + Tab)) $((ItemSquare / 2)) "$caption"
+    add_glyph $GlyphPos 0 $glyph $IconFg
+    add_text $CaptionPos $HalfSquare "$caption"
     convert_svg "$icons_path/evodevo_entry_${index}.png"
 done < scan.txt
-rm scan.txt
-rm tmp.svg
+
+rm -f screen.png scan.txt tmp.svg
 
 cat << DOC
 
