@@ -270,7 +270,7 @@ Unfortunately, whenever your system overwrites `grub.cfg` (this may happen
 on any kernel update, for example), the custom classes are wiped out, causing
 the EvoDevo menu to look empty:
 
-![empty-menu](example-empty.png)
+![empty-menu](example-empty.jpg)
 
 This may look scary, but GRUB remains fully functional, and after booting as
 usual you will be able to restore EvoDevo by re-running `sudo ./install`.
