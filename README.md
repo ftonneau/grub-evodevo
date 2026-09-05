@@ -5,15 +5,14 @@ background blurring, and antialiased true-type fonts. EvoDevo can use any
 wallpaper as background, and more than **40 theme parameters** (e.g., menu size,
 placement, color, transparency, and blurring) can be customized.
 
-EvoDevo allows you to **rename your menu entries**, and does it perfectly safely
+EvoDevo allows you to **rename your menu entries**, and does it safely
 because only the visual display changes (the real entries stay unaffected). In
 all cases, the install script auto-detects menu entries and decorates them with
 the corresponding emblem. If a distro is not recognized, it is assigned a
 hashbang (#) as emblem.
 
-EvoDevo also allows you to **preview your theme** without rebooting and without
-needing to install a virtual machine. EvoDevo's preview facility speeds up the
-configuration process considerably.
+To speed up configuration, EvoDevo also allows you to **preview your theme**
+without rebooting and without needing to install a VM.
 
 ![example-narrow](example-narrow.jpg)
 
@@ -185,7 +184,7 @@ preview.png successfully generated!
 -----------------------------
 ```
 
-Opening `preview.png` in your favorite image viewer will then show you **a preview
+and opening `preview.png` in your favorite image viewer will show you **a preview
 of the configured theme**. The preview is shown at the size of the screen at boot
 time, and for simplicity, the menu displays only one entry (a fake one: "Example
 of entry").
@@ -255,8 +254,8 @@ will do the job. The left side of the @ symbol is the portion of text to be
 replaced, the right side of the @ symbol is the replacement string that you
 want.
 
-Theme parameters are ordered in terms of decreasing importance. Proceed from the
-top to the bottom of the install script, and change the value of a parameter only
+Theme parameters are ordered in terms of decreasing importance. Accordingly, 
+proceed from the top to the bottom of the script, and change a parameter only
 if the need arises.
 
 
