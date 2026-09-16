@@ -261,9 +261,9 @@ if the need arises.
 
 # Example
 
-Aside from basic wallpaper, menu color, transparency, and blurring customization,
-the following screenshot illustrates title renaming, entry renaming, and the use
-of a logo as custom image.
+Aside from basic menu settings, the following screenshot illustrates title
+renaming, entry renaming, and the addition of a custom image to a monochromatic
+background.
 
 ![example-config](example-config.jpg)
 
