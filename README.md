@@ -1,9 +1,8 @@
 # Grub EvoDevo
 
-Grub EvoDevo is a highly configurable GRUB theme with scalable graphics,
-background blurring, and antialiased true-type fonts. EvoDevo can use any
-wallpaper as background, and more than **40 theme parameters** (e.g., menu size,
-placement, color, transparency, and blurring) can be customized.
+Grub EvoDevo is a configurable GRUB theme with scalable graphics, background
+blurring, and antialiased true-type fonts. Any wallpaper can be used as
+background, and more than 40 theme parameters can be customized.
 
 EvoDevo allows you to **rename your menu entries**, and does it safely
 because only the visual display changes (the real entries stay unaffected). In
